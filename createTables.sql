@@ -99,12 +99,12 @@ CREATE INDEX fk_Course_TeacherProfile ON Course (TeacherProfile_User_email ASC) 
 drop table ForumReply;
 CREATE  TABLE  ForumReply (
   User_email VARCHAR(255) NOT NULL ,
-  ForumReply_created_at TIMESTAMP,
-  ForumReply_User_email VARCHAR(255),
-  -- parent
+  created_at TIMESTAMP NOT NULL WITH DEFAULT,
   ForumThread_created_at TIMESTAMP NOT NULL ,
   ForumThread_title VARCHAR(45) NOT NULL ,
-  created_at TIMESTAMP NOT NULL WITH DEFAULT,
+  -- parent
+  ForumReply_created_at TIMESTAMP,
+  ForumReply_User_email VARCHAR(255),
   title VARCHAR(45) NOT NULL ,
   body VARCHAR(6144) NOT NULL ,
   num_likes INT NOT NULL DEFAULT 0 , --unsigned
@@ -127,11 +127,11 @@ ALTER TABLE ForumReply
 -- Table ForumThread
 -- -----------------------------------------------------
 CREATE  TABLE  ForumThread (
+  created_at TIMESTAMP NOT NULL ,
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
-  created_at TIMESTAMP NOT NULL ,
-  body VARCHAR(1644) NOT NULL ,
   title VARCHAR(45) NOT NULL ,
+  body VARCHAR(1644) NOT NULL ,
   PRIMARY KEY (created_at, title) ,
   CONSTRAINT fk_ForumThread_Course
     FOREIGN KEY (Course_name , Course_year )
