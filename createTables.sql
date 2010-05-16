@@ -1,4 +1,27 @@
-set schema "fn71100_71012"
+set schema "FN71100_71012"
+
+--DROP TABLE  "User" ;
+--DROP TABLE  "StudentProfile" ;
+--DROP TABLE  "TeacherProfile" ;
+--DROP TABLE  "Category" ;
+--DROP TABLE  "Course" ;
+--DROP TABLE  "ForumThread" ;
+--DROP TABLE  "ForumReply" ;
+--DROP TABLE  "Enrollment" ;
+--DROP TABLE  "CourseGrade" ;
+--DROP TABLE  "Rating" ;
+--DROP TABLE  "Assignment" ;
+--DROP TABLE  "AssignmentGrade" ;
+--DROP TABLE  "CourseOtherTeachers" ;
+--DROP TABLE  "News" ;
+--DROP TABLE  "AssignmentFile" ;
+--DROP TABLE  "Resource" ;
+--DROP TABLE  "ResourceFile" ;
+--DROP TABLE  "AssignmentNotification" ;
+--DROP TABLE  "CourseNotification" ;
+--DROP TABLE  "ForumReplyNotification" ;
+--DROP TABLE  "Speciality" ;
+--DROP TABLE  "SpecialityLookup" ;
 
 -- -----------------------------------------------------
 -- Table "User"
@@ -10,7 +33,7 @@ CREATE  TABLE  "User" (
   "password" VARCHAR(45) NOT NULL ,
   PRIMARY KEY ("email") );
 
-drop table "StudentProfile";
+--drop table "StudentProfile";
 
 -- -----------------------------------------------------
 -- Table "StudentProfile"
@@ -28,7 +51,7 @@ CREATE  TABLE  "StudentProfile" (
 
 CREATE INDEX "fk_StudentProfile_User" ON "StudentProfile" ("User_email" ASC) ;
 
-drop table "TeacherProfile";
+-- drop table "TeacherProfile";
 -- -----------------------------------------------------
 -- Table "TeacherProfile"
 -- -----------------------------------------------------
@@ -48,9 +71,10 @@ CREATE  TABLE  "TeacherProfile" (
 -- -----------------------------------------------------
 CREATE  TABLE  "Category" (
   "name" VARCHAR(45) NOT NULL ,
-  PRIMARY KEY ("name") )
+  PRIMARY KEY ("name") );
 
-drop table "Course";
+-- drop table "Course";
+
 -- -----------------------------------------------------
 -- Table "Course"
 -- -----------------------------------------------------
@@ -79,31 +103,30 @@ CREATE INDEX "fk_Course_TeacherProfile" ON "Course" ("TeacherProfile_User_email"
 -- -----------------------------------------------------
 -- Table "ForumReply"
 -- -----------------------------------------------------
-CREATE  TABLE  "FN71100_71012"."ForumReply" (
+CREATE  TABLE  "ForumReply" (
+   -- parent
+  "User_email" VARCHAR(255) NOT NULL,
   "ForumReply_created_at" TIMESTAMP NOT NULL ,
   "ForumReply_User_email" VARCHAR(255) NOT NULL ,
   "ForumThread_ForumReply_created_at" TIMESTAMP NOT NULL ,
   "ForumThread_ForumReply_User_email" VARCHAR(255) NOT NULL ,
   "created_at" TIMESTAMP NOT NULL ,
   "title" VARCHAR(45) NOT NULL ,
-  "body" VARCHAR(16352) NOT NULL ,
+  "body" VARCHAR(6144) NOT NULL ,
   "num_likes" INT NOT NULL DEFAULT 0 , --unsigned
-  "User_email" VARCHAR(255) NOT NULL ,
   "num_edits" INT NOT NULL DEFAULT 0 ,
-  PRIMARY KEY ("created_at", "User_email") ,
+  PRIMARY KEY ("User_email", "created_at") ,
   CONSTRAINT "fk_ForumReply_User"
     FOREIGN KEY ("User_email" )
     REFERENCES "User" ("email" )
-    ON DELETE SET NULL,
-  CONSTRAINT "fk_ForumReply_ForumReply"
-    FOREIGN KEY ("ForumReply_created_at" , "ForumReply_User_email" )
-    REFERENCES "FN71100_71012"."ForumReply" ("created_at" , "User_email" )
-    ON DELETE CASCADE,
-  CONSTRAINT "fk_ForumReply_ForumThread"
-    FOREIGN KEY ("ForumThread_ForumReply_created_at" , "ForumThread_ForumReply_User_email" )
-    REFERENCES "FN71100_71012"."ForumThread" ("ForumReply_created_at" , "ForumReply_User_email" )
     ON DELETE CASCADE
     );
+    
+ALTER TABLE "ForumReply"
+    ADD CONSTRAINT "fk_ForumReply_ForumReply"
+    FOREIGN KEY ("ForumReply_created_at" , "ForumReply_User_email" )
+    REFERENCES "ForumReply" ("created_at" , "User_email" )
+    ON DELETE CASCADE;
 
 -- -----------------------------------------------------
 -- Table "ForumThread"
@@ -114,33 +137,35 @@ CREATE  TABLE  "ForumThread" (
   "Course_name" VARCHAR(255) NOT NULL ,
   "Course_year" SMALLINT NOT NULL ,
   PRIMARY KEY ("ForumReply_created_at", "ForumReply_User_email") ,
-  CONSTRAINT "fk_ForumThread_ForumReply"
-    FOREIGN KEY ("ForumReply_created_at" )
-    REFERENCES "FN71100_71012"."ForumReply" ("created_at" )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT "fk_ForumThread_Course"
     FOREIGN KEY ("Course_name" , "Course_year" )
     REFERENCES "Course" ("name" , "year" )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
+-- circular dependencies workaround
+ALTER TABLE "ForumReply" ADD
+    CONSTRAINT "fk_ForumReply_ForumThread"
+    FOREIGN KEY ("ForumThread_ForumReply_created_at" , "ForumThread_ForumReply_User_email" )
+    REFERENCES "FN71100_71012"."ForumThread" ("ForumReply_created_at" , "ForumReply_User_email" )
+    ON DELETE CASCADE;
+
+ALTER TABLE "ForumThread" ADD
+    CONSTRAINT "fk_ForumThread_ForumReply"
+    FOREIGN KEY ("ForumReply_created_at", "ForumReply_User_email" )
+    REFERENCES "ForumReply" ("created_at", "User_email")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
 
 CREATE INDEX "fk_ForumThread_ForumReply" ON "ForumThread" ("ForumReply_created_at" ASC, "ForumReply_User_email" ASC) ;
 
 CREATE INDEX "fk_ForumThread_Course" ON "ForumThread" ("Course_name" ASC, "Course_year" ASC) ;
-
-drop table "ForumReply";
-
-
-
 
 CREATE INDEX "fk_ForumReply_User" ON "ForumReply" ("User_email" ASC) ;
 
 CREATE INDEX "fk_ForumReply_ForumReply" ON "ForumReply" ("ForumReply_created_at" ASC, "ForumReply_User_email" ASC) ;
 
 CREATE INDEX "fk_ForumReply_ForumThread" ON "ForumReply" ("ForumThread_ForumReply_created_at" ASC, "ForumThread_ForumReply_User_email" ASC) ;
-
 
 -- -----------------------------------------------------
 -- Table "Enrollment"
@@ -170,7 +195,7 @@ CREATE INDEX "fk_Enrollment_Course" ON "Enrollment" ("Course_name" ASC, "Course_
 -- Table "CourseGrade"
 -- -----------------------------------------------------
 CREATE  TABLE  "CourseGrade" (
-  "value" SMALLINT UNSIGNED NOT NULL DEFAULT 0 ,
+  "value" SMALLINT NOT NULL DEFAULT 0 , --unsigned
   "StudentProfile_User_email" VARCHAR(255) NOT NULL ,
   "Course_name" VARCHAR(255) NOT NULL ,
   "Course_year" SMALLINT NOT NULL ,
@@ -178,13 +203,12 @@ CREATE  TABLE  "CourseGrade" (
   CONSTRAINT "fk_CourseGrade_StudentProfile"
     FOREIGN KEY ("StudentProfile_User_email" )
     REFERENCES "StudentProfile" ("User_email" )
-    ON DELETE CASCADE
-    ,
+    ON DELETE CASCADE,
   CONSTRAINT "fk_CourseGrade_Course"
     FOREIGN KEY ("Course_name" , "Course_year" )
     REFERENCES "Course" ("name" , "year" )
     ON DELETE CASCADE
-    )
+    );
 
 CREATE INDEX "fk_CourseGrade_StudentProfile" ON "CourseGrade" ("StudentProfile_User_email" ASC) ;
 
@@ -195,7 +219,7 @@ CREATE INDEX "fk_CourseGrade_Course" ON "CourseGrade" ("Course_name" ASC, "Cours
 -- Table "Rating"
 -- -----------------------------------------------------
 CREATE  TABLE  "Rating" (
-  "value" SMALLINT UNSIGNED NOT NULL ,
+  "value" SMALLINT NOT NULL ,
   "Course_name" VARCHAR(255) NOT NULL ,
   "Course_year" SMALLINT NOT NULL ,
   "StudentProfile_User_email" VARCHAR(255) NOT NULL ,
@@ -204,18 +228,16 @@ CREATE  TABLE  "Rating" (
   CONSTRAINT "fk_Rating_Course"
     FOREIGN KEY ("Course_name" , "Course_year" )
     REFERENCES "Course" ("name" , "year" )
-    ON DELETE CASCADE
-    ,
+    ON DELETE CASCADE,
   CONSTRAINT "fk_Rating_StudentProfile"
     FOREIGN KEY ("StudentProfile_User_email" )
     REFERENCES "StudentProfile" ("User_email" )
-    ON DELETE CASCADE
-    ,
+    ON DELETE CASCADE,
   CONSTRAINT "fk_Rating_TeacherProfile1"
     FOREIGN KEY ("TeacherProfile_User_email" )
     REFERENCES "TeacherProfile" ("User_email" )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION);
 
 CREATE INDEX "fk_Rating_Course" ON "Rating" ("Course_name" ASC, "Course_year" ASC) ;
 
@@ -223,31 +245,29 @@ CREATE INDEX "fk_Rating_StudentProfile" ON "Rating" ("StudentProfile_User_email"
 
 CREATE INDEX "fk_Rating_TeacherProfile1" ON "Rating" ("TeacherProfile_User_email" ASC) ;
 
-
 -- -----------------------------------------------------
 -- Table "Assignment"
 -- -----------------------------------------------------
 CREATE  TABLE  "Assignment" (
   "title" VARCHAR(255) NOT NULL ,
-  "description" MEDIUMTEXT NOT NULL ,
-  "deadline" TIMESTAMP NULL ,
-  "max_points" SMALLINT UNSIGNED NOT NULL ,
+  "description" VARCHAR(6144) NOT NULL ,
+  "deadline" TIMESTAMP NOT NULL WITH DEFAULT,
+  "max_points" SMALLINT NOT NULL , --unsigned
   "Course_name" VARCHAR(255) NOT NULL ,
   "Course_year" SMALLINT NOT NULL ,
   "TeacherProfile_User_email" VARCHAR(255) NOT NULL ,
-  "created_at" VARCHAR(45) NULL ,
+  "created_at" VARCHAR(45),
   "TeacherProfile_User_email1" VARCHAR(255) NOT NULL ,
   PRIMARY KEY ("title", "Course_name", "Course_year") ,
   CONSTRAINT "fk_Assignment_Course"
     FOREIGN KEY ("Course_name" , "Course_year" )
     REFERENCES "Course" ("name" , "year" )
-    ON DELETE CASCADE
-    ,
+    ON DELETE CASCADE,
   CONSTRAINT "fk_Assignment_TeacherProfile1"
     FOREIGN KEY ("TeacherProfile_User_email1" )
     REFERENCES "TeacherProfile" ("User_email" )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION);
 
 CREATE INDEX "fk_Assignment_Course" ON "Assignment" ("Course_name" ASC, "Course_year" ASC) ;
 
@@ -258,7 +278,7 @@ CREATE INDEX "fk_Assignment_TeacherProfile1" ON "Assignment" ("TeacherProfile_Us
 -- Table "AssignmentGrade"
 -- -----------------------------------------------------
 CREATE  TABLE  "AssignmentGrade" (
-  "value" SMALLINT UNSIGNED NOT NULL ,
+  "value" SMALLINT NOT NULL , -- unsigned
   "StudentProfile_faculty_number" INT NOT NULL ,
   "StudentProfile_User_email" VARCHAR(255) NOT NULL ,
   "Assignment_title" VARCHAR(255) NOT NULL ,
@@ -266,20 +286,18 @@ CREATE  TABLE  "AssignmentGrade" (
   "Assignment_Course_year" SMALLINT NOT NULL ,
   PRIMARY KEY ("StudentProfile_faculty_number", "StudentProfile_User_email", "Assignment_title", "Assignment_Course_name", "Assignment_Course_year") ,
   CONSTRAINT "fk_AssignmentGrade_StudentProfile"
-    FOREIGN KEY ("StudentProfile_faculty_number" )
-    REFERENCES "StudentProfile" ("faculty_number" )
-    ON DELETE CASCADE
-    ,
+    FOREIGN KEY ("StudentProfile_User_email" )
+    REFERENCES "StudentProfile" ("User_email" )
+    ON DELETE CASCADE,
   CONSTRAINT "fk_AssignmentGrade_Assignment"
     FOREIGN KEY ("Assignment_title" , "Assignment_Course_name" , "Assignment_Course_year" )
     REFERENCES "Assignment" ("title" , "Course_name" , "Course_year" )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION);
 
 CREATE INDEX "fk_AssignmentGrade_StudentProfile" ON "AssignmentGrade" ("StudentProfile_faculty_number" ASC, "StudentProfile_User_email" ASC) ;
 
 CREATE INDEX "fk_AssignmentGrade_Assignment" ON "AssignmentGrade" ("Assignment_title" ASC, "Assignment_Course_name" ASC, "Assignment_Course_year" ASC) ;
-
 
 -- -----------------------------------------------------
 -- Table "CourseOtherTeachers"
@@ -292,38 +310,35 @@ CREATE  TABLE  "CourseOtherTeachers" (
   CONSTRAINT "fk_CourseOtherTeachers_TeacherProfile"
     FOREIGN KEY ("TeacherProfile_User_email" )
     REFERENCES "TeacherProfile" ("User_email" )
-    ON DELETE CASCADE
-    ,
+    ON DELETE CASCADE,
   CONSTRAINT "fk_CourseOtherTeachers_Course"
     FOREIGN KEY ("Course_name" , "Course_year" )
     REFERENCES "Course" ("name" , "year" )
     ON DELETE CASCADE
-    )
+    );
 
 CREATE INDEX "fk_CourseOtherTeachers_TeacherProfile" ON "CourseOtherTeachers" ("TeacherProfile_User_email" ASC) ;
 
 CREATE INDEX "fk_CourseOtherTeachers_Course" ON "CourseOtherTeachers" ("Course_name" ASC, "Course_year" ASC) ;
 
-
 -- -----------------------------------------------------
 -- Table "News"
 -- -----------------------------------------------------
 CREATE  TABLE  "News" (
-  "created_at" TIMESTAMP NOT NULL ,
+  "created_at" TIMESTAMP NOT NULL WITH DEFAULT,
   "Course_name" VARCHAR(255) NOT NULL ,
-  "Course_year" SMALLINT NOT NULL ,
-  "TeacherProfile_User_email" VARCHAR(255) NOT NULL ,
+  "Course_year" INT NOT NULL ,
+  "TeacherProfile_User_email" VARCHAR(255) NOT NULL,
   PRIMARY KEY ("created_at", "TeacherProfile_User_email") ,
   CONSTRAINT "fk_News_Course"
     FOREIGN KEY ("Course_name" , "Course_year" )
     REFERENCES "Course" ("name" , "year" )
-    ON DELETE CASCADE
-    ,
+    ON DELETE CASCADE,
   CONSTRAINT "fk_News_TeacherProfile"
     FOREIGN KEY ("TeacherProfile_User_email" )
     REFERENCES "TeacherProfile" ("User_email" )
-    ON DELETE SET NULL
-    )
+    ON DELETE CASCADE
+    );
 
 CREATE INDEX "fk_News_Course" ON "News" ("Course_name" ASC, "Course_year" ASC) ;
 
@@ -334,8 +349,8 @@ CREATE INDEX "fk_News_TeacherProfile" ON "News" ("TeacherProfile_User_email" ASC
 -- Table "AssignmentFile"
 -- -----------------------------------------------------
 CREATE  TABLE  "AssignmentFile" (
-  "path" MEDIUMTEXT NOT NULL ,
-  "name" VARCHAR(255) NULL ,
+  "path" VARCHAR(1024) NOT NULL ,
+  "name" VARCHAR(255) ,
   "Assignment_title" VARCHAR(255) NOT NULL ,
   "Assignment_Course_name" VARCHAR(255) NOT NULL ,
   "Assignment_Course_year" SMALLINT NOT NULL ,
@@ -344,18 +359,17 @@ CREATE  TABLE  "AssignmentFile" (
     FOREIGN KEY ("Assignment_title" , "Assignment_Course_name" , "Assignment_Course_year" )
     REFERENCES "Assignment" ("title" , "Course_name" , "Course_year" )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION);
 
 CREATE INDEX "fk_AssignmentFile_Assignment" ON "AssignmentFile" ("Assignment_title" ASC, "Assignment_Course_name" ASC, "Assignment_Course_year" ASC) ;
-
 
 -- -----------------------------------------------------
 -- Table "Resource"
 -- -----------------------------------------------------
 CREATE  TABLE  "Resource" (
-  "id" INT NOT NULL AUTO_INCREMENT ,
+  "id" INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
   "created_at" TIMESTAMP NOT NULL ,
-  "description" MEDIUMTEXT NOT NULL ,
+  "description" VARCHAR(6144) NOT NULL ,
   "Course_name" VARCHAR(255) NOT NULL ,
   "Course_year" SMALLINT NOT NULL ,
   PRIMARY KEY ("id") ,
@@ -363,7 +377,7 @@ CREATE  TABLE  "Resource" (
     FOREIGN KEY ("Course_name" , "Course_year" )
     REFERENCES "Course" ("name" , "year" )
     ON DELETE CASCADE
-    )
+    );
 
 CREATE INDEX "fk_Resource_Course" ON "Resource" ("Course_name" ASC, "Course_year" ASC) ;
 
@@ -372,8 +386,8 @@ CREATE INDEX "fk_Resource_Course" ON "Resource" ("Course_name" ASC, "Course_year
 -- Table "ResourceFile"
 -- -----------------------------------------------------
 CREATE  TABLE  "ResourceFile" (
-  "path" MEDIUMTEXT NOT NULL ,
-  "name" VARCHAR(255) NULL ,
+  "path" VARCHAR(1024) NOT NULL ,
+  "name" VARCHAR(255) ,
   "Resource_id" INT NOT NULL ,
   PRIMARY KEY ("path") ,
   CONSTRAINT "fk_ResourceFile_Resource"
@@ -389,9 +403,9 @@ CREATE INDEX "fk_ResourceFile_Resource" ON "ResourceFile" ("Resource_id" ASC) ;
 -- Table "AssignmentNotification"
 -- -----------------------------------------------------
 CREATE  TABLE  "AssignmentNotification" (
-  "body" MEDIUMTEXT NOT NULL ,
-  "created_at" TIMESTAMP NOT NULL ,
-  "id" INT NOT NULL AUTO_INCREMENT ,
+  "body" VARCHAR(6144) NOT NULL ,
+  "created_at" TIMESTAMP NOT NULL WITH DEFAULT,
+  "id" INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
   "Assignment_title" VARCHAR(255) NOT NULL ,
   "Assignment_Course_name" VARCHAR(255) NOT NULL ,
   "Assignment_Course_year" SMALLINT NOT NULL ,
@@ -400,7 +414,7 @@ CREATE  TABLE  "AssignmentNotification" (
     FOREIGN KEY ("Assignment_title" , "Assignment_Course_name" , "Assignment_Course_year" )
     REFERENCES "Assignment" ("title" , "Course_name" , "Course_year" )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION);
 
 CREATE INDEX "fk_AssignmentNotification_Assignment" ON "AssignmentNotification" ("Assignment_title" ASC, "Assignment_Course_name" ASC, "Assignment_Course_year" ASC) ;
 
@@ -409,9 +423,9 @@ CREATE INDEX "fk_AssignmentNotification_Assignment" ON "AssignmentNotification" 
 -- Table "CourseNotification"
 -- -----------------------------------------------------
 CREATE  TABLE  "CourseNotification" (
-  "body" MEDIUMTEXT NOT NULL ,
+  "body" VARCHAR(6144) NOT NULL ,
   "created_at" TIMESTAMP NOT NULL ,
-  "id" INT NOT NULL AUTO_INCREMENT ,
+  "id" INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
   "Course_name" VARCHAR(255) NOT NULL ,
   "Course_year" SMALLINT NOT NULL ,
   PRIMARY KEY ("id") ,
@@ -423,23 +437,21 @@ CREATE  TABLE  "CourseNotification" (
 
 CREATE INDEX "fk_CourseNotification_Course" ON "CourseNotification" ("Course_name" ASC, "Course_year" ASC) ;
 
-
 -- -----------------------------------------------------
 -- Table "ForumReplyNotification"
 -- -----------------------------------------------------
 CREATE  TABLE  "ForumReplyNotification" (
-  "body" MEDIUMTEXT NOT NULL ,
-  "created_at" TIMESTAMP NOT NULL ,
-  "id" INT NOT NULL AUTO_INCREMENT ,
-  PRIMARY KEY ("id") )
-
+  "body" VARCHAR(1644) NOT NULL ,
+  "created_at" TIMESTAMP NOT NULL WITH DEFAULT,
+  "id" INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+  PRIMARY KEY ("id") );
 
 -- -----------------------------------------------------
 -- Table "Speciality"
 -- -----------------------------------------------------
 CREATE  TABLE  "Speciality" (
   "name" VARCHAR(255) NOT NULL ,
-  PRIMARY KEY ("name") )
+  PRIMARY KEY ("name") );
 
 
 -- -----------------------------------------------------
@@ -454,6 +466,6 @@ CREATE  TABLE  "SpecialityLookup" (
     FOREIGN KEY ("Speciality_name" )
     REFERENCES "Speciality" ("name" )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION);
 
 CREATE INDEX "fk_SpecialityLookup_Speciality1" ON "SpecialityLookup" ("Speciality_name" ASC) ;

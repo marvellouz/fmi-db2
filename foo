@@ -1,19 +1,29 @@
-set schema `fn71100_71012`;
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
+
+CREATE SCHEMA IF NOT EXISTS `fn71100_71012` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
+USE `fn71100_71012`;
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`User`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`User` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`User` (
   `email` VARCHAR(255) NOT NULL ,
   `first_name` VARCHAR(45) NOT NULL ,
   `last_name` VARCHAR(45) NOT NULL ,
   `password` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`email`) )
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`StudentProfile`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`StudentProfile` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`StudentProfile` (
   `faculty_number` INT NOT NULL ,
   `User_email` VARCHAR(255) NOT NULL ,
@@ -24,11 +34,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`StudentProfile` (
     REFERENCES `fn71100_71012`.`User` (`email` )
     ON DELETE CASCADE
     ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`TeacherProfile`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`TeacherProfile` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`TeacherProfile` (
   `title` VARCHAR(45) NULL ,
   `User_email` VARCHAR(255) NOT NULL ,
@@ -39,42 +52,53 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`TeacherProfile` (
     REFERENCES `fn71100_71012`.`User` (`email` )
     ON DELETE CASCADE
     ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`Category`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`Category` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Category` (
   `name` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`name`) )
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`Course`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`Course` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Course` (
   `name` VARCHAR(255) NOT NULL ,
   `year` SMALLINT NOT NULL ,
-  `TeacherProfile_User_email` VARCHAR(255) NOT NULL ,
   `Category_name` VARCHAR(45) NOT NULL ,
   `password` VARCHAR(45) NULL ,
   `numEnrolled` INT NOT NULL DEFAULT 0 ,
+  `TeacherProfile_User_email` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`name`, `year`) ,
-  INDEX `fk_Course_TeacherProfile` (`TeacherProfile_User_email` ASC) ,
   INDEX `fk_Course_Category` (`Category_name` ASC) ,
-  CONSTRAINT `fk_Course_TeacherProfile`
-    FOREIGN KEY ()
-    REFERENCES `fn71100_71012`.`TeacherProfile` ()
+  INDEX `fk_Course_TeacherProfile` (`TeacherProfile_User_email` ASC) ,
   CONSTRAINT `fk_Course_Category`
     FOREIGN KEY (`Category_name` )
     REFERENCES `fn71100_71012`.`Category` (`name` )
     ON DELETE SET NULL
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Course_TeacherProfile`
+    FOREIGN KEY (`TeacherProfile_User_email` )
+    REFERENCES `fn71100_71012`.`TeacherProfile` (`User_email` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`ForumThread`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`ForumThread` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`ForumThread` (
   `ForumReply_created_at` TIMESTAMP NOT NULL ,
   `ForumReply_User_email` VARCHAR(255) NOT NULL ,
@@ -93,11 +117,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`ForumThread` (
     REFERENCES `fn71100_71012`.`Course` (`name` , `year` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`ForumReply`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`ForumReply` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`ForumReply` (
   `ForumReply_created_at` TIMESTAMP NOT NULL ,
   `ForumReply_User_email` VARCHAR(255) NOT NULL ,
@@ -128,11 +155,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`ForumReply` (
     REFERENCES `fn71100_71012`.`ForumThread` (`ForumReply_created_at` , `ForumReply_User_email` )
     ON DELETE CASCADE
     ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`Enrollment`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`Enrollment` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Enrollment` (
   `StudentProfile_User_email` VARCHAR(255) NOT NULL ,
   `Course_name` VARCHAR(255) NOT NULL ,
@@ -150,11 +180,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Enrollment` (
     REFERENCES `fn71100_71012`.`Course` (`name` , `year` )
     ON DELETE CASCADE
     ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`CourseGrade`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`CourseGrade` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`CourseGrade` (
   `value` SMALLINT UNSIGNED NOT NULL DEFAULT 0 ,
   `StudentProfile_User_email` VARCHAR(255) NOT NULL ,
@@ -173,26 +206,24 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`CourseGrade` (
     REFERENCES `fn71100_71012`.`Course` (`name` , `year` )
     ON DELETE CASCADE
     ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`Rating`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`Rating` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Rating` (
   `value` SMALLINT UNSIGNED NOT NULL ,
-  `TeacherProfile_User_email` VARCHAR(255) NOT NULL ,
   `Course_name` VARCHAR(255) NOT NULL ,
   `Course_year` SMALLINT NOT NULL ,
   `StudentProfile_User_email` VARCHAR(255) NOT NULL ,
-  PRIMARY KEY (`TeacherProfile_User_email`, `Course_name`, `Course_year`, `StudentProfile_User_email`) ,
-  INDEX `fk_Rating_TeacherProfile` (`TeacherProfile_User_email` ASC) ,
+  `TeacherProfile_User_email` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`Course_name`, `Course_year`, `StudentProfile_User_email`, `TeacherProfile_User_email`) ,
   INDEX `fk_Rating_Course` (`Course_name` ASC, `Course_year` ASC) ,
   INDEX `fk_Rating_StudentProfile` (`StudentProfile_User_email` ASC) ,
-  CONSTRAINT `fk_Rating_TeacherProfile`
-    FOREIGN KEY ()
-    REFERENCES `fn71100_71012`.`TeacherProfile` ()
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
+  INDEX `fk_Rating_TeacherProfile1` (`TeacherProfile_User_email` ASC) ,
   CONSTRAINT `fk_Rating_Course`
     FOREIGN KEY (`Course_name` , `Course_year` )
     REFERENCES `fn71100_71012`.`Course` (`name` , `year` )
@@ -202,12 +233,20 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Rating` (
     FOREIGN KEY (`StudentProfile_User_email` )
     REFERENCES `fn71100_71012`.`StudentProfile` (`User_email` )
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Rating_TeacherProfile1`
+    FOREIGN KEY (`TeacherProfile_User_email` )
+    REFERENCES `fn71100_71012`.`TeacherProfile` (`User_email` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`Assignment`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`Assignment` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Assignment` (
   `title` VARCHAR(255) NOT NULL ,
   `description` MEDIUMTEXT NOT NULL ,
@@ -217,24 +256,28 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Assignment` (
   `Course_year` SMALLINT NOT NULL ,
   `TeacherProfile_User_email` VARCHAR(255) NOT NULL ,
   `created_at` VARCHAR(45) NULL ,
+  `TeacherProfile_User_email1` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`title`, `Course_name`, `Course_year`) ,
   INDEX `fk_Assignment_Course` (`Course_name` ASC, `Course_year` ASC) ,
-  INDEX `fk_Assignment_TeacherProfile` (`TeacherProfile_User_email` ASC) ,
+  INDEX `fk_Assignment_TeacherProfile1` (`TeacherProfile_User_email1` ASC) ,
   CONSTRAINT `fk_Assignment_Course`
     FOREIGN KEY (`Course_name` , `Course_year` )
     REFERENCES `fn71100_71012`.`Course` (`name` , `year` )
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_Assignment_TeacherProfile`
-    FOREIGN KEY ()
-    REFERENCES `fn71100_71012`.`TeacherProfile` ()
-    ON DELETE SET NULL
-    ON UPDATE CASCADE)
+  CONSTRAINT `fk_Assignment_TeacherProfile1`
+    FOREIGN KEY (`TeacherProfile_User_email1` )
+    REFERENCES `fn71100_71012`.`TeacherProfile` (`User_email` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`AssignmentGrade`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`AssignmentGrade` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`AssignmentGrade` (
   `value` SMALLINT UNSIGNED NOT NULL ,
   `StudentProfile_faculty_number` INT NOT NULL ,
@@ -255,11 +298,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`AssignmentGrade` (
     REFERENCES `fn71100_71012`.`Assignment` (`title` , `Course_name` , `Course_year` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`CourseOtherTeachers`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`CourseOtherTeachers` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`CourseOtherTeachers` (
   `TeacherProfile_User_email` VARCHAR(255) NOT NULL ,
   `Course_name` VARCHAR(255) NOT NULL ,
@@ -277,11 +323,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`CourseOtherTeachers` (
     REFERENCES `fn71100_71012`.`Course` (`name` , `year` )
     ON DELETE CASCADE
     ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`News`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`News` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`News` (
   `created_at` TIMESTAMP NOT NULL ,
   `Course_name` VARCHAR(255) NOT NULL ,
@@ -300,11 +349,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`News` (
     REFERENCES `fn71100_71012`.`TeacherProfile` (`User_email` )
     ON DELETE SET NULL
     ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`AssignmentFile`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`AssignmentFile` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`AssignmentFile` (
   `path` MEDIUMTEXT NOT NULL ,
   `name` VARCHAR(255) NULL ,
@@ -318,11 +370,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`AssignmentFile` (
     REFERENCES `fn71100_71012`.`Assignment` (`title` , `Course_name` , `Course_year` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`Resource`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`Resource` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Resource` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `created_at` TIMESTAMP NOT NULL ,
@@ -336,11 +391,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Resource` (
     REFERENCES `fn71100_71012`.`Course` (`name` , `year` )
     ON DELETE CASCADE
     ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`ResourceFile`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`ResourceFile` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`ResourceFile` (
   `path` MEDIUMTEXT NOT NULL ,
   `name` VARCHAR(255) NULL ,
@@ -352,11 +410,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`ResourceFile` (
     REFERENCES `fn71100_71012`.`Resource` (`id` )
     ON DELETE CASCADE
     ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`AssignmentNotification`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`AssignmentNotification` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`AssignmentNotification` (
   `body` MEDIUMTEXT NOT NULL ,
   `created_at` TIMESTAMP NOT NULL ,
@@ -371,11 +432,14 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`AssignmentNotification` (
     REFERENCES `fn71100_71012`.`Assignment` (`title` , `Course_name` , `Course_year` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`CourseNotification`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`CourseNotification` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`CourseNotification` (
   `body` MEDIUMTEXT NOT NULL ,
   `created_at` TIMESTAMP NOT NULL ,
@@ -389,29 +453,38 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`CourseNotification` (
     REFERENCES `fn71100_71012`.`Course` (`name` , `year` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`ForumReplyNotification`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`ForumReplyNotification` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`ForumReplyNotification` (
   `body` MEDIUMTEXT NOT NULL ,
   `created_at` TIMESTAMP NOT NULL ,
   `id` INT NOT NULL AUTO_INCREMENT ,
   PRIMARY KEY (`id`) )
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`Speciality`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`Speciality` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`Speciality` (
   `name` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`name`) )
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `fn71100_71012`.`SpecialityLookup`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fn71100_71012`.`SpecialityLookup` ;
+
 CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`SpecialityLookup` (
   `fn_from` VARCHAR(45) NOT NULL ,
   `fn_to` VARCHAR(45) NOT NULL ,
@@ -423,3 +496,66 @@ CREATE  TABLE IF NOT EXISTS `fn71100_71012`.`SpecialityLookup` (
     REFERENCES `fn71100_71012`.`Speciality` (`name` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+USE `fn71100_71012`;
+
+DELIMITER //
+
+DROP TRIGGER IF EXISTS `fn71100_71012`.`SYNTAX_ERROR_1` //
+CREATE TRIGGER tr_new_assignment_notify AFTER INSERT ON ASSIGNMENT
+REFERENCING
+	NEW ROW AS N
+FOR EACH ROW
+	INSERT INTO AssignmentNotification(body, Assignment_title, Assignment_Course_name, Assignment_Course_year)
+	VALUES ('New assignment was added!', N.Assignment_title, N.Assignment_Course_name, N.Assignment_Course_year)
+BEGIN
+END//
+
+
+DELIMITER ;
+
+DELIMITER //
+
+DROP TRIGGER IF EXISTS `fn71100_71012`.`SYNTAX_ERROR_1` //
+CREATE TRIGGER tr_new_assignment_notify AFTER INSERT ON ASSIGNMENT
+REFERENCING
+	NEW ROW AS N
+FOR EACH ROW
+	INSERT INTO AssignmentNotification(body, Assignment_title, Assignment_Course_name, Assignment_Course_year)
+	VALUES ('New assignment was added!', N.Assignment_title, N.Assignment_Course_name, N.Assignment_Course_year)
+BEGIN
+END//
+
+
+DELIMITER ;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+DROP TABLE IF EXISTS `fn71100_71012`.`User` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`StudentProfile` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`TeacherProfile` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`Category` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`Course` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`ForumThread` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`ForumReply` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`Enrollment` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`CourseGrade` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`Rating` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`Assignment` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`AssignmentGrade` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`CourseOtherTeachers` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`News` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`AssignmentFile` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`Resource` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`ResourceFile` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`AssignmentNotification` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`CourseNotification` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`ForumReplyNotification` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`Speciality` ;
+DROP TABLE IF EXISTS `fn71100_71012`.`SpecialityLookup` ;
+DROP TRIGGER IF EXISTS `fn71100_71012`.`SYNTAX_ERROR_1` //
+DROP TRIGGER IF EXISTS `fn71100_71012`.`SYNTAX_ERROR_1` //
