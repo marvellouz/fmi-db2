@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import re
+DATA_DIR="./data"
 
 def find_order():
   res=[]
@@ -8,8 +9,12 @@ def find_order():
   for l in f:
     m=re.match(r'CREATE\W+TABLE\W+(\w+)\W*\(', l)
     if m:
-      res.append(m.group(1).lowercase())
+      res.append(m.group(1).lower())
   return res
+
+def custom_key(word, order):
+  if word in order:
+    return order.index(word)
 
 def get_value(x):
   x=x.strip()
@@ -24,12 +29,15 @@ def get_value(x):
     else:
       return "NULL"
 
+def sort_files(files):
+  order=find_order()
+  files.sort(key=lambda x: custom_key(x.lower(), order))
+  return files
 
 def main():
-  os.chdir("./data")
-  files = os.listdir('.')
-  #sort_files(files, find_order())
+  files = sort_files(os.listdir(DATA_DIR))
   res = ["set schema FN71100_71012;"]
+  os.chdir(DATA_DIR)
   for fn in files:
     f = open(fn, 'r')
     for line in f:
