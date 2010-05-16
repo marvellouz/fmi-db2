@@ -2,10 +2,15 @@
 import os
 def get_value(x):
   x=x.strip()
-  if x:
-    return "'%s'" % x
-  else:
-    return "NULL"
+  if x=="*":
+    return "CURRENT TIMESTAMP"
+  try:
+    return "%d" % int(x)
+  except ValueError:
+    if x:
+      return "'%s'" % x
+    else:
+      return "NULL"
 
 def main():
   os.chdir("./data")

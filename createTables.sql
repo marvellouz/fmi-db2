@@ -1,27 +1,27 @@
 set schema FN71100_71012;
 
---DROP TABLE  User ;
---DROP TABLE  StudentProfile ;
---DROP TABLE  TeacherProfile ;
---DROP TABLE  Category ;
---DROP TABLE  Course ;
---DROP TABLE  ForumThread ;
---DROP TABLE  ForumReply ;
---DROP TABLE  Enrollment ;
---DROP TABLE  CourseGrade ;
---DROP TABLE  Rating ;
---DROP TABLE  Assignment ;
---DROP TABLE  AssignmentGrade ;
---DROP TABLE  CourseOtherTeachers ;
---DROP TABLE  News ;
---DROP TABLE  AssignmentFile ;
---DROP TABLE  Resource ;
---DROP TABLE  ResourceFile ;
---DROP TABLE  AssignmentNotification ;
---DROP TABLE  CourseNotification ;
---DROP TABLE  ForumReplyNotification ;
---DROP TABLE  Speciality ;
---DROP TABLE  SpecialityLookup ;
+DROP TABLE  User ;
+DROP TABLE  StudentProfile ;
+DROP TABLE  TeacherProfile ;
+DROP TABLE  Category ;
+DROP TABLE  Course ;
+DROP TABLE  ForumThread ;
+DROP TABLE  ForumReply ;
+DROP TABLE  Enrollment ;
+DROP TABLE  CourseGrade ;
+DROP TABLE  Rating ;
+DROP TABLE  Assignment ;
+DROP TABLE  AssignmentGrade ;
+DROP TABLE  CourseOtherTeachers ;
+DROP TABLE  News ;
+DROP TABLE  AssignmentFile ;
+DROP TABLE  Resource ;
+DROP TABLE  ResourceFile ;
+DROP TABLE  AssignmentNotification ;
+DROP TABLE  CourseNotification ;
+DROP TABLE  ForumReplyNotification ;
+DROP TABLE  Speciality ;
+DROP TABLE  SpecialityLookup ;
 
 -- -----------------------------------------------------
 -- Table User
@@ -97,13 +97,13 @@ CREATE INDEX fk_Course_TeacherProfile ON Course (TeacherProfile_User_email ASC) 
 -- Table ForumReply
 -- -----------------------------------------------------
 CREATE  TABLE  ForumReply (
-   -- parent
   User_email VARCHAR(255) NOT NULL,
-  ForumReply_created_at TIMESTAMP NOT NULL ,
-  ForumReply_User_email VARCHAR(255) NOT NULL ,
+  ForumReply_created_at TIMESTAMP,
+   -- parent
+  ForumReply_User_email VARCHAR(255),
   ForumThread_ForumReply_created_at TIMESTAMP NOT NULL ,
   ForumThread_ForumReply_User_email VARCHAR(255) NOT NULL ,
-  created_at TIMESTAMP NOT NULL ,
+  created_at TIMESTAMP NOT NULL WITH DEFAULT,
   title VARCHAR(45) NOT NULL ,
   body VARCHAR(6144) NOT NULL ,
   num_likes INT NOT NULL DEFAULT 0 , --unsigned
@@ -114,7 +114,8 @@ CREATE  TABLE  ForumReply (
     REFERENCES User (email )
     ON DELETE CASCADE
     );
-    
+
+
 ALTER TABLE ForumReply
     ADD CONSTRAINT fk_ForumReply_ForumReply
     FOREIGN KEY (ForumReply_created_at , ForumReply_User_email )
@@ -125,7 +126,7 @@ ALTER TABLE ForumReply
 -- Table ForumThread
 -- -----------------------------------------------------
 CREATE  TABLE  ForumThread (
-  ForumReply_created_at TIMESTAMP NOT NULL ,
+  ForumReply_created_at TIMESTAMP NOT NULL WITH DEFAULT,
   ForumReply_User_email VARCHAR(255) NOT NULL ,
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
@@ -357,7 +358,7 @@ CREATE INDEX fk_AssignmentFile_Assignment ON AssignmentFile (Assignment_title AS
 -- -----------------------------------------------------
 CREATE  TABLE  Resource (
   id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-  created_at TIMESTAMP NOT NULL ,
+  created_at TIMESTAMP NOT NULL WITH DEFAULT,
   description VARCHAR(6144) NOT NULL ,
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
@@ -413,7 +414,7 @@ CREATE INDEX fk_AssignmentNotification_Assignment ON AssignmentNotification (Ass
 -- -----------------------------------------------------
 CREATE  TABLE  CourseNotification (
   body VARCHAR(6144) NOT NULL ,
-  created_at TIMESTAMP NOT NULL ,
+  created_at TIMESTAMP NOT NULL WITH DEFAULT,
   id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
