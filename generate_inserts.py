@@ -21,7 +21,7 @@ def get_value(x):
   x=x.strip()
   x=re.sub(r'\'', "", x)
   if re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', x):
-     return "TIMESTAMP(\"%s\")" % x
+     return "TIMESTAMP('%s')" % x
   if x=="*":
     return "CURRENT TIMESTAMP"
   try:

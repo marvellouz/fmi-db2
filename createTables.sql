@@ -94,17 +94,33 @@ CREATE INDEX fk_Course_Category ON Course (Category_name ASC) ;
 CREATE INDEX fk_Course_TeacherProfile ON Course (TeacherProfile_User_email ASC) ;
 
 -- -----------------------------------------------------
+-- Table ForumThread
+-- -----------------------------------------------------
+CREATE  TABLE  ForumThread (
+  created_at TIMESTAMP NOT NULL ,
+  Course_name VARCHAR(255) NOT NULL ,
+  Course_year SMALLINT NOT NULL ,
+  title VARCHAR(255) NOT NULL ,
+  body VARCHAR(1644) NOT NULL ,
+  PRIMARY KEY (created_at, title) ,
+  CONSTRAINT fk_ForumThread_Course
+    FOREIGN KEY (Course_name , Course_year )
+    REFERENCES fn71100_71012.Course (name , year )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+-- -----------------------------------------------------
 -- Table ForumReply
 -- -----------------------------------------------------
 CREATE  TABLE  ForumReply (
   User_email VARCHAR(255) NOT NULL ,
   created_at TIMESTAMP NOT NULL WITH DEFAULT,
   ForumThread_created_at TIMESTAMP NOT NULL ,
-  ForumThread_title VARCHAR(45) NOT NULL ,
+  ForumThread_title VARCHAR(255) NOT NULL ,
   -- parent
   ForumReply_created_at TIMESTAMP,
   ForumReply_User_email VARCHAR(255),
-  title VARCHAR(45) NOT NULL ,
+  title VARCHAR(255) NOT NULL ,
   body VARCHAR(6144) NOT NULL ,
   num_likes INT NOT NULL DEFAULT 0 , --unsigned
   num_edits INT NOT NULL DEFAULT 0 ,
@@ -121,22 +137,6 @@ ALTER TABLE ForumReply
     FOREIGN KEY (ForumReply_created_at , ForumReply_User_email )
     REFERENCES ForumReply (created_at , User_email )
     ON DELETE CASCADE;
-
--- -----------------------------------------------------
--- Table ForumThread
--- -----------------------------------------------------
-CREATE  TABLE  ForumThread (
-  created_at TIMESTAMP NOT NULL ,
-  Course_name VARCHAR(255) NOT NULL ,
-  Course_year SMALLINT NOT NULL ,
-  title VARCHAR(45) NOT NULL ,
-  body VARCHAR(1644) NOT NULL ,
-  PRIMARY KEY (created_at, title) ,
-  CONSTRAINT fk_ForumThread_Course
-    FOREIGN KEY (Course_name , Course_year )
-    REFERENCES fn71100_71012.Course (name , year )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
 
 -- circular dependencies workaround
 ALTER TABLE ForumReply ADD
@@ -241,7 +241,7 @@ CREATE  TABLE  Assignment (
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
   TeacherProfile_User_email VARCHAR(255) NOT NULL ,
-  created_at VARCHAR(45),
+  created_at TIMESTAMP NOT NULL WITH DEFAULT,
   PRIMARY KEY (title, Course_name, Course_year) ,
   CONSTRAINT fk_Assignment_Course
     FOREIGN KEY (Course_name , Course_year )
@@ -310,8 +310,6 @@ CREATE  TABLE  News (
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
   TeacherProfile_User_email VARCHAR(255) NOT NULL,
-  title VARCHAR(45) NOT NULL ,
-  body VARCHAR(1644) NOT NULL ,
   PRIMARY KEY (created_at, TeacherProfile_User_email) ,
   CONSTRAINT fk_News_Course
     FOREIGN KEY (Course_name , Course_year )
