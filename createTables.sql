@@ -96,7 +96,6 @@ CREATE INDEX fk_Course_TeacherProfile ON Course (TeacherProfile_User_email ASC) 
 -- -----------------------------------------------------
 -- Table ForumReply
 -- -----------------------------------------------------
-drop table ForumReply;
 CREATE  TABLE  ForumReply (
   User_email VARCHAR(255) NOT NULL ,
   created_at TIMESTAMP NOT NULL WITH DEFAULT,

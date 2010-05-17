@@ -92,13 +92,13 @@ INSERT INTO Forumreply
 INSERT INTO Forumreply
  VALUES('petkan@abv.bg', CURRENT TIMESTAMP, 'valentin@yahoo.com', CURRENT TIMESTAMP, 'ilian@yahoo.com', CURRENT TIMESTAMP, 'Im thinking I am having permission problems with oblogout and openbox in arch.', 'I am currently running Arch with openbox. I have setup oblogout, but the only buttons that work are Logout and cancel. I cant get shutdown, reboot, suspend, or lock to work. Any ideas?', 5, 9);
 INSERT INTO Forumthread
- VALUES(CURRENT TIMESTAMP, 'valentin@yahoo.com', 'Not Classical Logics For Artificial Intelligence', 2010);
+ VALUES(CURRENT TIMESTAMP, 'Not Classical Logics For Artificial Intelligence', 2010, 'Test title of thread', 'Test body of thread');
 INSERT INTO Forumthread
- VALUES(CURRENT TIMESTAMP, 'dinko@yahoo.com', 'Set Theory', 2010);
+ VALUES(CURRENT TIMESTAMP, 'Set Theory', 2010);
 INSERT INTO Forumthread
- VALUES(CURRENT TIMESTAMP, 'elena@yahoo.com', 'Not Classical Logics For Artificial Intelligence', 2010);
+ VALUES(CURRENT TIMESTAMP, 'Not Classical Logics For Artificial Intelligence', 2010, 'Test title of thread 2', 'Test body of thread 2');
 INSERT INTO Forumthread
- VALUES(CURRENT TIMESTAMP, 'petkan@abv.bg', 'Python', 2009);
+ VALUES(CURRENT TIMESTAMP, 'Python', 2009, 'Test title of thread 3', 'Test body of thread 3');
 INSERT INTO Enrollment
  VALUES('ivan@abv.bg', 'Not Classical Logics For Artificial Intelligence', 2010);
 INSERT INTO Enrollment

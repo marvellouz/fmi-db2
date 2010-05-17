@@ -97,13 +97,13 @@ CREATE INDEX fk_Course_TeacherProfile ON Course (TeacherProfile_User_email ASC) 
 -- Table ForumReply
 -- -----------------------------------------------------
 CREATE  TABLE  ForumReply (
-  User_email VARCHAR(255) NOT NULL,
-  ForumReply_created_at TIMESTAMP,
-   -- parent
-  ForumReply_User_email VARCHAR(255),
-  ForumThread_ForumReply_created_at TIMESTAMP NOT NULL ,
-  ForumThread_ForumReply_User_email VARCHAR(255) NOT NULL ,
+  User_email VARCHAR(255) NOT NULL ,
   created_at TIMESTAMP NOT NULL WITH DEFAULT,
+  ForumThread_created_at TIMESTAMP NOT NULL ,
+  ForumThread_title VARCHAR(45) NOT NULL ,
+  -- parent
+  ForumReply_created_at TIMESTAMP,
+  ForumReply_User_email VARCHAR(255),
   title VARCHAR(45) NOT NULL ,
   body VARCHAR(6144) NOT NULL ,
   num_likes INT NOT NULL DEFAULT 0 , --unsigned
@@ -113,7 +113,7 @@ CREATE  TABLE  ForumReply (
     FOREIGN KEY (User_email )
     REFERENCES User (email )
     ON DELETE CASCADE
-    );
+   );
 
 
 ALTER TABLE ForumReply
@@ -126,30 +126,24 @@ ALTER TABLE ForumReply
 -- Table ForumThread
 -- -----------------------------------------------------
 CREATE  TABLE  ForumThread (
-  ForumReply_created_at TIMESTAMP NOT NULL WITH DEFAULT,
-  ForumReply_User_email VARCHAR(255) NOT NULL ,
+  created_at TIMESTAMP NOT NULL ,
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
-  PRIMARY KEY (ForumReply_created_at, ForumReply_User_email) ,
+  title VARCHAR(45) NOT NULL ,
+  body VARCHAR(1644) NOT NULL ,
+  PRIMARY KEY (created_at, title) ,
   CONSTRAINT fk_ForumThread_Course
     FOREIGN KEY (Course_name , Course_year )
-    REFERENCES Course (name , year )
+    REFERENCES fn71100_71012.Course (name , year )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 -- circular dependencies workaround
 ALTER TABLE ForumReply ADD
     CONSTRAINT fk_ForumReply_ForumThread
-    FOREIGN KEY (ForumThread_ForumReply_created_at , ForumThread_ForumReply_User_email )
-    REFERENCES FN71100_71012.ForumThread (ForumReply_created_at , ForumReply_User_email )
+    FOREIGN KEY (ForumThread_created_at , ForumThread_title )
+    REFERENCES ForumThread (created_at , title )
     ON DELETE CASCADE;
-
-ALTER TABLE ForumThread ADD
-    CONSTRAINT fk_ForumThread_ForumReply
-    FOREIGN KEY (ForumReply_created_at, ForumReply_User_email )
-    REFERENCES ForumReply (created_at, User_email)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION;
 
 CREATE INDEX fk_ForumThread_Course ON ForumThread (Course_name ASC, Course_year ASC) ;
 
@@ -157,7 +151,7 @@ CREATE INDEX fk_ForumReply_User ON ForumReply (User_email ASC) ;
 
 CREATE INDEX fk_ForumReply_ForumReply ON ForumReply (ForumReply_created_at ASC, ForumReply_User_email ASC) ;
 
-CREATE INDEX fk_ForumReply_ForumThread ON ForumReply (ForumThread_ForumReply_created_at ASC, ForumThread_ForumReply_User_email ASC) ;
+CREATE INDEX fk_ForumReply_ForumThread ON ForumReply (ForumThread_created_at ASC, ForumThread_title ASC) ;
 
 -- -----------------------------------------------------
 -- Table Enrollment
@@ -553,13 +547,13 @@ INSERT INTO Forumreply
 INSERT INTO Forumreply
  VALUES('petkan@abv.bg', CURRENT TIMESTAMP, 'valentin@yahoo.com', CURRENT TIMESTAMP, 'ilian@yahoo.com', CURRENT TIMESTAMP, 'Im thinking I am having permission problems with oblogout and openbox in arch.', 'I am currently running Arch with openbox. I have setup oblogout, but the only buttons that work are Logout and cancel. I cant get shutdown, reboot, suspend, or lock to work. Any ideas?', 5, 9);
 INSERT INTO Forumthread
- VALUES(CURRENT TIMESTAMP, 'valentin@yahoo.com', 'Not Classical Logics For Artificial Intelligence', 2010);
+ VALUES(CURRENT TIMESTAMP, 'Not Classical Logics For Artificial Intelligence', 2010, 'Test title of thread', 'Test body of thread');
 INSERT INTO Forumthread
- VALUES(CURRENT TIMESTAMP, 'dinko@yahoo.com', 'Set Theory', 2010);
+ VALUES(CURRENT TIMESTAMP, 'Set Theory', 2010);
 INSERT INTO Forumthread
- VALUES(CURRENT TIMESTAMP, 'elena@yahoo.com', 'Not Classical Logics For Artificial Intelligence', 2010);
+ VALUES(CURRENT TIMESTAMP, 'Not Classical Logics For Artificial Intelligence', 2010, 'Test title of thread 2', 'Test body of thread 2');
 INSERT INTO Forumthread
- VALUES(CURRENT TIMESTAMP, 'petkan@abv.bg', 'Python', 2009);
+ VALUES(CURRENT TIMESTAMP, 'Python', 2009, 'Test title of thread 3', 'Test body of thread 3');
 INSERT INTO Enrollment
  VALUES('ivan@abv.bg', 'Not Classical Logics For Artificial Intelligence', 2010);
 INSERT INTO Enrollment
