@@ -1,4 +1,5 @@
-* | Not Classical Logics For Artificial Intelligence | 2010 | Test title of thread | Test body of thread
-* | Set Theory | 2010
-* | Not Classical Logics For Artificial Intelligence | 2010 | Test title of thread 2 | Test body of thread 2
-* | Python | 2009 | Test title of thread 3 | Test body of thread 3
+# created_at| Course_name| Course_year| title| body
+2010-05-17 13:16:23 | Not Classical Logics For Artificial Intelligence | 2010 | Test title of thread | Test body of thread
+2010-05-17 13:16:31 | Set Theory | 2010 | Another title | This is some small body with a question or something.
+2010-05-17 13:16:34 | Not Classical Logics For Artificial Intelligence | 2010 | Test title of thread 2 | Test body of thread 2
+2010-05-17 13:16:37 | Python | 2009 | Test title of thread 3 | Test body of thread 3
