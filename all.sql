@@ -309,6 +309,8 @@ CREATE  TABLE  News (
   created_at TIMESTAMP NOT NULL WITH DEFAULT,
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
+  title VARCHAR(255) NOT NULL ,
+  body VARCHAR(1644) NOT NULL ,
   TeacherProfile_User_email VARCHAR(255) NOT NULL,
   PRIMARY KEY (created_at, TeacherProfile_User_email) ,
   CONSTRAINT fk_News_Course
