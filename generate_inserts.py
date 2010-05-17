@@ -47,6 +47,7 @@ def main():
     f = open(fn, 'r')
     for line in f:
       line = line.strip()
+      if not line: continue
       if line[0]=='#':
         fields = [s.strip() for s in line[1:].split('|') if s]
         fields_count = len(fields)
