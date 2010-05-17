@@ -19,6 +19,8 @@ def custom_key(word, order):
 def get_value(x):
   x=x.strip()
   x=re.sub(r'\'', "", x)
+  if re.match(r'\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d', x):
+     return "TIMESTAMP(\"%s\")" % x
   if x=="*":
     return "CURRENT TIMESTAMP"
   try:
@@ -39,11 +41,23 @@ def main():
   res = ["set schema FN71100_71012;"]
   os.chdir(DATA_DIR)
   for fn in files:
+    fields = []
+    field_names = ""
     f = open(fn, 'r')
     for line in f:
-      line=line.strip()
-      if line:
-        res.append("INSERT INTO %s\n VALUES(%s);" % (fn.capitalize(), ', '.join(map(get_value, line.split('|')) )) )
+      line = line.strip()
+      if line[0]=='#':
+        fields = [s.strip() for s in line[1:].split('|') if s]
+        fields_count = len(fields)
+        field_names = "(%s)" % ','.join(fields)
+      else:
+        values = map(get_value, line.split('|'))
+        if fields:
+            values_count = len(values)
+            if fields_count!=values_count:
+              raise ValueError("Mismatch between fields count (%d) and values count (%d) in file %s!" % ( fields_count, values_count, fn ))
+        if line:
+            res.append("INSERT INTO %s %s\n VALUES(%s);" % (fn.capitalize(), field_names, ', '.join(values) ) )
     f.close()
   print "\n".join(res)
 
