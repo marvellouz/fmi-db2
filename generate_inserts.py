@@ -2,10 +2,11 @@
 import os
 import re
 DATA_DIR="./data"
+TABLES_SQL="createTables.sql"
 
 def find_order():
   res=[]
-  f = open("createTables.sql", 'r')
+  f = open(TABLES_SQL, 'r')
   for l in f:
     m=re.match(r'CREATE\W+TABLE\W+(\w+)\W*\(', l)
     if m:
@@ -19,7 +20,7 @@ def custom_key(word, order):
 def get_value(x):
   x=x.strip()
   x=re.sub(r'\'', "", x)
-  if re.match(r'\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d', x):
+  if re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', x):
      return "TIMESTAMP(\"%s\")" % x
   if x=="*":
     return "CURRENT TIMESTAMP"

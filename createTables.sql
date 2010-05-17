@@ -263,12 +263,11 @@ CREATE INDEX fk_Assignment_TeacherProfile ON Assignment (TeacherProfile_User_ema
 -- -----------------------------------------------------
 CREATE  TABLE  AssignmentGrade (
   value SMALLINT NOT NULL , -- unsigned
-  StudentProfile_faculty_number INT NOT NULL ,
   StudentProfile_User_email VARCHAR(255) NOT NULL ,
   Assignment_title VARCHAR(255) NOT NULL ,
   Assignment_Course_name VARCHAR(255) NOT NULL ,
   Assignment_Course_year SMALLINT NOT NULL ,
-  PRIMARY KEY (StudentProfile_faculty_number, StudentProfile_User_email, Assignment_title, Assignment_Course_name, Assignment_Course_year) ,
+  PRIMARY KEY (StudentProfile_User_email, Assignment_title, Assignment_Course_name, Assignment_Course_year) ,
   CONSTRAINT fk_AssignmentGrade_StudentProfile
     FOREIGN KEY (StudentProfile_User_email )
     REFERENCES StudentProfile (User_email )
@@ -278,8 +277,6 @@ CREATE  TABLE  AssignmentGrade (
     REFERENCES Assignment (title , Course_name , Course_year )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
-
-CREATE INDEX fk_AssignmentGrade_StudentProfile ON AssignmentGrade (StudentProfile_faculty_number ASC, StudentProfile_User_email ASC) ;
 
 CREATE INDEX fk_AssignmentGrade_Assignment ON AssignmentGrade (Assignment_title ASC, Assignment_Course_name ASC, Assignment_Course_year ASC) ;
 
@@ -311,7 +308,7 @@ CREATE INDEX fk_CourseOtherTeachers_Course ON CourseOtherTeachers (Course_name A
 CREATE  TABLE  News (
   created_at TIMESTAMP NOT NULL WITH DEFAULT,
   Course_name VARCHAR(255) NOT NULL ,
-  Course_year INT NOT NULL ,
+  Course_year SMALLINT NOT NULL ,
   TeacherProfile_User_email VARCHAR(255) NOT NULL,
   PRIMARY KEY (created_at, TeacherProfile_User_email) ,
   CONSTRAINT fk_News_Course
