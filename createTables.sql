@@ -310,6 +310,8 @@ CREATE  TABLE  News (
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
   TeacherProfile_User_email VARCHAR(255) NOT NULL,
+  title VARCHAR(45) NOT NULL ,
+  body VARCHAR(1644) NOT NULL ,
   PRIMARY KEY (created_at, TeacherProfile_User_email) ,
   CONSTRAINT fk_News_Course
     FOREIGN KEY (Course_name , Course_year )

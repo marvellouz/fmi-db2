@@ -1,0 +1,8 @@
+# value | StudentProfile_faculty_number | StudentProfile_User_email | Assignment_title | Assignment_Course_name | Assignment_Course_year
+4 | 70047 | violeta@yahoo.com | Test assignment 1 | Python | 2009
+5 | 70048 | nikoleta@yahoo.com | Test assignment 1 | Python | 2009
+6 | 70048 | violeta@yahoo.com | Test assignment 2 | Python | 2009
+5 | 70048 | nikoleta@yahoo.com | Test assignment 2 | Python | 2009
+8 | 70042 | dragan@abv.bg | Test assignment 3 | Set Theory | 2010
+8 | 70044 | ilian@yahoo.com | Test assignment 3 | Set Theory | 2010
+9 | 70045 | simeon@yahoo.com | Test assignment 3 | Set Theory | 2010
