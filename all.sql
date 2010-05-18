@@ -22,7 +22,7 @@ DROP TABLE  CourseNotification ;
 DROP TABLE  ForumReplyNotification ;
 DROP TABLE  Speciality ;
 
-DROP TABLE  "FN71100_71012"."SPECIALITYLOOKUP" ;
+DROP TABLE  SpecialityLookup ;
 
 -- -----------------------------------------------------
 -- Table User

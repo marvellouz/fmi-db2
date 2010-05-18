@@ -15,11 +15,9 @@ def main():
     print 'Invalid number'
     return -1
 
-  BASE_URL = "http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.messages.sql.doc/doc/msql00%s.html"
-  if err_number<0:
-    err_str = "%sn" % str(-err_number)
-  else:
-    err_str = str(err_number)
+  BASE_URL = "http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.messages.sql.doc/doc/msql%s.html"
+  err_str=("%d" % abs(err_number)).zfill(5)
+  err_str+=["w","n"][err_number<0]
   req = Request(BASE_URL % err_str)
   res = urlopen(req)
   f=os.popen("lynx -stdin", 'w')
