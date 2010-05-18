@@ -52,17 +52,11 @@ INSERT INTO Teacherprofile
 INSERT INTO Teacherprofile 
  VALUES(NULL, 'dinko@yahoo.com');
 INSERT INTO Teacherprofile 
- VALUES(NULL, 'emil@yahoo.com');
-INSERT INTO Teacherprofile 
  VALUES('professor', 'dimitar@yahoo.com');
-INSERT INTO Teacherprofile 
- VALUES('professor', 'elena@yahoo.com');
 INSERT INTO Teacherprofile 
  VALUES('professor', 'maria@yahoo.com');
 INSERT INTO Teacherprofile 
- VALUES(NULL, 'petia@yahoo.com');
-INSERT INTO Teacherprofile 
- VALUES(NULL, 'ivanka@yahoo.com');
+ VALUES('assoc.prof.', 'elena@yahoo.com');
 INSERT INTO Category 
  VALUES('mathematics');
 INSERT INTO Category 
@@ -80,7 +74,7 @@ INSERT INTO Course
 INSERT INTO Course 
  VALUES('Python', 2009, 'informatics', 'pass', 2, 'dinko@yahoo.com');
 INSERT INTO Course 
- VALUES('Ruby on Rails', 2008, NULL, NULL, 44, 'petia@yahoo.com');
+ VALUES('Ruby on Rails', 2008, NULL, NULL, 44, 'dimitar@yahoo.com');
 INSERT INTO Course 
  VALUES('Algebra', 2010, 'mathematics', 'passalgebra', 33, 'elena@yahoo.com');
 INSERT INTO Forumthread (created_at,Course_name,Course_year,title,body)

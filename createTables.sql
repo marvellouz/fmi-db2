@@ -1,5 +1,9 @@
 set schema FN71100_71012;
 
+DROP FUNCTION get_speciality;
+DROP FUNCTION count_speciality_students;
+DROP FUNCTION get_teacher_mean_rating;
+
 DROP TABLE  User ;
 DROP TABLE  StudentProfile ;
 DROP TABLE  TeacherProfile ;
@@ -21,9 +25,6 @@ DROP TABLE  AssignmentNotification ;
 DROP TABLE  CourseNotification ;
 DROP TABLE  ForumReplyNotification ;
 DROP TABLE  Speciality ;
-
-DROP FUNCTION get_speciality;
-DROP FUNCTION cout_speciality_students;
 DROP TABLE  SpecialityLookup;
 
 -- -----------------------------------------------------
