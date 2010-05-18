@@ -60,7 +60,6 @@ CREATE  TABLE  TeacherProfile (
     ON DELETE CASCADE
     );
 
-
 -- -----------------------------------------------------
 -- Table Category
 -- -----------------------------------------------------
@@ -431,8 +430,8 @@ CREATE  TABLE  ForumReplyNotification (
   ForumReply_created_at TIMESTAMP,
   ForumReply_User_email VARCHAR(255),
   CONSTRAINT fk_ForumReplyNotification_ForumReply
-    FOREIGN KEY (Course_name , Course_year )
-    REFERENCES Course (name , year )
+    FOREIGN KEY (ForumReply_created_at, ForumReply_User_email)
+    REFERENCES ForumReply(created_at , User_email )
     ON DELETE SET NULL);
 -- -----------------------------------------------------
 -- Table Speciality
@@ -445,8 +444,8 @@ CREATE  TABLE  Speciality (
 -- Table SpecialityLookup
 -- -----------------------------------------------------
 CREATE  TABLE  SpecialityLookup (
-  fn_from VARCHAR(45) NOT NULL ,
-  fn_to VARCHAR(45) NOT NULL ,
+  fn_from INT NOT NULL ,
+  fn_to INT NOT NULL ,
   Speciality_name VARCHAR(255) NOT NULL ,
   PRIMARY KEY (fn_from, fn_to, Speciality_name) ,
   CONSTRAINT fk_SpecialityLookup_Speciality

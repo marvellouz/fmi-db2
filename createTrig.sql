@@ -5,10 +5,10 @@ set schema FN71100_71012;
 --	FOR EACH ROW
 --	INSERT INTO ForumReplyNotification(body,  ForumReply_created_at, ForumReply_User_email)
 --	VALUES ('New reply ' CONCAT N_ROW.title CONCAT ' was added to the forum of course ' CONCAT N_ROW.course_name CONCAT '!', N_ROW.title, N_ROW.course_name, N_ROW.course_year);
-drop trigger tr_new_assignment_notify;
-drop trigger tr_deleted_assignment_notify;
-drop trigger tr_enrollment_new_count;
-drop trigger tr_enrollment_delete_count;
+-- drop trigger tr_new_assignment_notify;
+-- drop trigger tr_deleted_assignment_notify;
+-- drop trigger tr_enrollment_new_count;
+-- drop trigger tr_enrollment_delete_count;
 
 CREATE TRIGGER tr_new_assignment_notify AFTER INSERT ON Assignment
 REFERENCING
