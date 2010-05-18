@@ -1,7 +1,11 @@
 set schema FN71100_71012;
 
+DROP FUNCTION FN71100_71012.get_speciality;
+DROP FUNCTION FN71100_71012.count_speciality_students;
+
 DROP TABLE  User ;
 DROP TABLE  StudentProfile ;
+
 DROP TABLE  TeacherProfile ;
 DROP TABLE  Category ;
 DROP TABLE  Course ;
@@ -21,8 +25,7 @@ DROP TABLE  AssignmentNotification ;
 DROP TABLE  CourseNotification ;
 DROP TABLE  ForumReplyNotification ;
 DROP TABLE  Speciality ;
-
-DROP TABLE  SpecialityLookup ;
+DROP TABLE  SpecialityLookup;
 
 -- -----------------------------------------------------
 -- Table User

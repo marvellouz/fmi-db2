@@ -1,13 +1,25 @@
 set schema FN71100_71012;
 
-DROP FUNCTION Get_Speciality;
+-- DROP FUNCTION Get_Speciality;
 
 -- returns the speciality of a based on a faculty number
 -- does not check if there is actually a student with this faculty number
-CREATE FUNCTION Get_Speciality(fn INT) RETURNS VARCHAR(255)
+CREATE FUNCTION get_speciality(fn INT) RETURNS VARCHAR(255)
 	RETURN (SELECT speciality_name
 	  	FROM SpecialityLookup
 	  	WHERE fn>=fn_from AND fn<=fn_to);
 
-SELECT FN71100_71012.Get_Speciality(faculty_number)
-FROM StudentProfile;
+CREATE FUNCTION count_speciality_students(spec VARCHAR(255)) RETURNS INT
+	RETURN (SELECT COUNT(*)
+	  	FROM StudentProfile sp
+	  	WHERE spec=FN71100_71012.get_speciality(sp.faculty_number));
+
+SELECT u.first_name, u.last_name, faculty_number, FN71100_71012.get_speciality(sp.faculty_number) as "Speciality"
+FROM StudentProfile sp
+LEFT JOIN User u
+on u.email=sp.User_email
+GROUP BY sp.faculty_number, u.first_name, u.last_name;
+
+SELECT s.name, FN71100_71012.count_speciality_students(s.name) as "Students"
+FROM Speciality s
+GROUP BY s.name;

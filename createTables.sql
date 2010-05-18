@@ -21,7 +21,10 @@ DROP TABLE  AssignmentNotification ;
 DROP TABLE  CourseNotification ;
 DROP TABLE  ForumReplyNotification ;
 DROP TABLE  Speciality ;
-DROP TABLE  SpecialityLookup ;
+
+DROP FUNCTION get_speciality;
+DROP FUNCTION cout_speciality_students;
+DROP TABLE  SpecialityLookup;
 
 -- -----------------------------------------------------
 -- Table User
