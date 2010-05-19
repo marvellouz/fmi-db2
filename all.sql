@@ -1,5 +1,9 @@
 set schema FN71100_71012;
 
+DROP FUNCTION FN71100_71012.count_speciality_students;
+DROP FUNCTION FN71100_71012.get_speciality;
+DROP FUNCTION FN71100_71012.get_teacher_mean_rating;
+
 DROP TABLE  User ;
 DROP TABLE  StudentProfile ;
 DROP TABLE  TeacherProfile ;
@@ -21,7 +25,7 @@ DROP TABLE  AssignmentNotification ;
 DROP TABLE  CourseNotification ;
 DROP TABLE  ForumReplyNotification ;
 DROP TABLE  Speciality ;
-DROP TABLE  SpecialityLookup ;
+DROP TABLE  SpecialityLookup;
 
 -- -----------------------------------------------------
 -- Table User
@@ -60,7 +64,6 @@ CREATE  TABLE  TeacherProfile (
     ON DELETE CASCADE
     );
 
-
 -- -----------------------------------------------------
 -- Table Category
 -- -----------------------------------------------------
@@ -71,13 +74,14 @@ CREATE  TABLE  Category (
 -- -----------------------------------------------------
 -- Table Course
 -- -----------------------------------------------------
+
 CREATE  TABLE  Course (
   name VARCHAR(255) NOT NULL ,
   year SMALLINT NOT NULL ,
   Category_name VARCHAR(45) ,
   password VARCHAR(45),
   numEnrolled INT NOT NULL DEFAULT 0 ,
-  TeacherProfile_User_email VARCHAR(255) NOT NULL ,
+  TeacherProfile_User_email VARCHAR(255),
   PRIMARY KEY (name, year),
   CONSTRAINT fk_Course_Category
     FOREIGN KEY (Category_name )
@@ -86,7 +90,7 @@ CREATE  TABLE  Course (
   CONSTRAINT fk_Course_TeacherProfile
     FOREIGN KEY (TeacherProfile_User_email )
     REFERENCES TeacherProfile (User_email )
-    ON DELETE NO ACTION
+    ON DELETE SET NULL
     ON UPDATE NO ACTION);
 
 CREATE INDEX fk_Course_Category ON Course (Category_name ASC) ;
@@ -105,9 +109,9 @@ CREATE  TABLE  ForumThread (
   PRIMARY KEY (created_at, title) ,
   CONSTRAINT fk_ForumThread_Course
     FOREIGN KEY (Course_name , Course_year )
-    REFERENCES fn71100_71012.Course (name , year )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    REFERENCES Course (name , year )
+    ON DELETE CASCADE
+    );
 
 -- -----------------------------------------------------
 -- Table ForumReply
@@ -221,8 +225,8 @@ CREATE  TABLE  Rating (
   CONSTRAINT fk_Rating_TeacherProfile
     FOREIGN KEY (TeacherProfile_User_email )
     REFERENCES TeacherProfile (User_email )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    ON DELETE CASCADE 
+    );
 
 CREATE INDEX fk_Rating_Course ON Rating (Course_name ASC, Course_year ASC) ;
 
@@ -240,7 +244,7 @@ CREATE  TABLE  Assignment (
   max_points SMALLINT NOT NULL , --unsigned
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
-  TeacherProfile_User_email VARCHAR(255) NOT NULL ,
+  TeacherProfile_User_email VARCHAR(255),
   created_at TIMESTAMP NOT NULL WITH DEFAULT,
   PRIMARY KEY (title, Course_name, Course_year) ,
   CONSTRAINT fk_Assignment_Course
@@ -250,8 +254,7 @@ CREATE  TABLE  Assignment (
   CONSTRAINT fk_Assignment_TeacherProfile
     FOREIGN KEY (TeacherProfile_User_email )
     REFERENCES TeacherProfile (User_email )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    );
 
 CREATE INDEX fk_Assignment_Course ON Assignment (Course_name ASC, Course_year ASC) ;
 
@@ -275,8 +278,8 @@ CREATE  TABLE  AssignmentGrade (
   CONSTRAINT fk_AssignmentGrade_Assignment
     FOREIGN KEY (Assignment_title , Assignment_Course_name , Assignment_Course_year )
     REFERENCES Assignment (title , Course_name , Course_year )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    ON DELETE CASCADE
+    );
 
 CREATE INDEX fk_AssignmentGrade_Assignment ON AssignmentGrade (Assignment_title ASC, Assignment_Course_name ASC, Assignment_Course_year ASC) ;
 
@@ -341,8 +344,8 @@ CREATE  TABLE  AssignmentFile (
   CONSTRAINT fk_AssignmentFile_Assignment
     FOREIGN KEY (Assignment_title , Assignment_Course_name , Assignment_Course_year )
     REFERENCES Assignment (title , Course_name , Course_year )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    ON DELETE CASCADE
+    );
 
 CREATE INDEX fk_AssignmentFile_Assignment ON AssignmentFile (Assignment_title ASC, Assignment_Course_name ASC, Assignment_Course_year ASC) ;
 
@@ -389,15 +392,15 @@ CREATE  TABLE  AssignmentNotification (
   body VARCHAR(6144) NOT NULL ,
   created_at TIMESTAMP NOT NULL WITH DEFAULT,
   id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-  Assignment_title VARCHAR(255) NOT NULL ,
-  Assignment_Course_name VARCHAR(255) NOT NULL ,
-  Assignment_Course_year SMALLINT NOT NULL ,
-  PRIMARY KEY (id, Assignment_title, Assignment_Course_name, Assignment_Course_year) ,
+  Assignment_title VARCHAR(255),
+  Assignment_Course_name VARCHAR(255),
+  Assignment_Course_year SMALLINT,
+  PRIMARY KEY (id) ,
   CONSTRAINT fk_AssignmentNotification_Assignment
     FOREIGN KEY (Assignment_title , Assignment_Course_name , Assignment_Course_year )
     REFERENCES Assignment (title , Course_name , Course_year )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    ON DELETE SET NULL
+    );
 
 CREATE INDEX fk_AssignmentNotification_Assignment ON AssignmentNotification (Assignment_title ASC, Assignment_Course_name ASC, Assignment_Course_year ASC) ;
 
@@ -409,14 +412,14 @@ CREATE  TABLE  CourseNotification (
   body VARCHAR(6144) NOT NULL ,
   created_at TIMESTAMP NOT NULL WITH DEFAULT,
   id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-  Course_name VARCHAR(255) NOT NULL ,
-  Course_year SMALLINT NOT NULL ,
+  Course_name VARCHAR(255) ,
+  Course_year SMALLINT ,
   PRIMARY KEY (id) ,
   CONSTRAINT fk_CourseNotification_Course
     FOREIGN KEY (Course_name , Course_year )
     REFERENCES Course (name , year )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    ON DELETE SET NULL
+  );
 
 CREATE INDEX fk_CourseNotification_Course ON CourseNotification (Course_name ASC, Course_year ASC) ;
 
@@ -427,8 +430,13 @@ CREATE  TABLE  ForumReplyNotification (
   body VARCHAR(1644) NOT NULL ,
   created_at TIMESTAMP NOT NULL WITH DEFAULT,
   id INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-  PRIMARY KEY (id) );
-
+  PRIMARY KEY (id),
+  ForumReply_created_at TIMESTAMP,
+  ForumReply_User_email VARCHAR(255),
+  CONSTRAINT fk_ForumReplyNotification_ForumReply
+    FOREIGN KEY (ForumReply_created_at, ForumReply_User_email)
+    REFERENCES ForumReply(created_at , User_email )
+    ON DELETE SET NULL);
 -- -----------------------------------------------------
 -- Table Speciality
 -- -----------------------------------------------------
@@ -436,13 +444,12 @@ CREATE  TABLE  Speciality (
   name VARCHAR(255) NOT NULL ,
   PRIMARY KEY (name) );
 
-
 -- -----------------------------------------------------
 -- Table SpecialityLookup
 -- -----------------------------------------------------
 CREATE  TABLE  SpecialityLookup (
-  fn_from VARCHAR(45) NOT NULL ,
-  fn_to VARCHAR(45) NOT NULL ,
+  fn_from INT NOT NULL ,
+  fn_to INT NOT NULL ,
   Speciality_name VARCHAR(255) NOT NULL ,
   PRIMARY KEY (fn_from, fn_to, Speciality_name) ,
   CONSTRAINT fk_SpecialityLookup_Speciality
@@ -496,27 +503,21 @@ INSERT INTO Studentprofile
 INSERT INTO Studentprofile 
  VALUES(70045, 'simeon@yahoo.com');
 INSERT INTO Studentprofile 
- VALUES(70046, 'nikola@yahoo.com');
+ VALUES(71046, 'nikola@yahoo.com');
 INSERT INTO Studentprofile 
- VALUES(70047, 'violeta@yahoo.com');
+ VALUES(71047, 'violeta@yahoo.com');
 INSERT INTO Studentprofile 
- VALUES(70048, 'nikoleta@yahoo.com');
+ VALUES(71048, 'nikoleta@yahoo.com');
 INSERT INTO Teacherprofile 
  VALUES('dr', 'valentin@yahoo.com');
 INSERT INTO Teacherprofile 
  VALUES(NULL, 'dinko@yahoo.com');
 INSERT INTO Teacherprofile 
- VALUES(NULL, 'emil@yahoo.com');
-INSERT INTO Teacherprofile 
  VALUES('professor', 'dimitar@yahoo.com');
-INSERT INTO Teacherprofile 
- VALUES('professor', 'elena@yahoo.com');
 INSERT INTO Teacherprofile 
  VALUES('professor', 'maria@yahoo.com');
 INSERT INTO Teacherprofile 
- VALUES(NULL, 'petia@yahoo.com');
-INSERT INTO Teacherprofile 
- VALUES(NULL, 'ivanka@yahoo.com');
+ VALUES('assoc.prof.', 'elena@yahoo.com');
 INSERT INTO Category 
  VALUES('mathematics');
 INSERT INTO Category 
@@ -534,7 +535,7 @@ INSERT INTO Course
 INSERT INTO Course 
  VALUES('Python', 2009, 'informatics', 'pass', 2, 'dinko@yahoo.com');
 INSERT INTO Course 
- VALUES('Ruby on Rails', 2008, NULL, NULL, 44, 'petia@yahoo.com');
+ VALUES('Ruby on Rails', 2008, NULL, NULL, 44, 'dimitar@yahoo.com');
 INSERT INTO Course 
  VALUES('Algebra', 2010, 'mathematics', 'passalgebra', 33, 'elena@yahoo.com');
 INSERT INTO Forumthread (created_at,Course_name,Course_year,title,body)
@@ -629,3 +630,106 @@ INSERT INTO News (created_at,Course_name,Course_year,TeacherProfile_User_email,t
  VALUES(TIMESTAMP('2010-05-27 13:15:31'), 'Not Classical Logics For Artificial Intelligence', 2010, 'dimitar@yahoo.com', 'Test logic news 2', 'Test logic news 2. Content of the news');
 INSERT INTO News (created_at,Course_name,Course_year,TeacherProfile_User_email,title,body)
  VALUES(TIMESTAMP('2010-04-14 13:15:34'), 'Python', 2009, 'dinko@yahoo.com', 'Test python news 1', 'Test python news 1. Content of the news.');
+INSERT INTO Speciality 
+ VALUES('Informatics');
+INSERT INTO Speciality 
+ VALUES('Computer Science');
+INSERT INTO Speciality 
+ VALUES('Mathematics');
+INSERT INTO Speciality 
+ VALUES('Applied Mathematics');
+INSERT INTO Specialitylookup (fn_from,fn_to,Speciality_name)
+ VALUES(70000, 70999, 'Informatics');
+INSERT INTO Specialitylookup (fn_from,fn_to,Speciality_name)
+ VALUES(71000, 71999, 'Computer Science');
+set schema FN71100_71012;
+--CREATE TRIGGER tr_forumreply_notify AFTER INSERT ON ForumReply
+--REFERENCING
+--	NEW AS N_ROW
+--	FOR EACH ROW
+--	INSERT INTO ForumReplyNotification(body,  ForumReply_created_at, ForumReply_User_email)
+--	VALUES ('New reply ' CONCAT N_ROW.title CONCAT ' was added to the forum of course ' CONCAT N_ROW.course_name CONCAT '!', N_ROW.title, N_ROW.course_name, N_ROW.course_year);
+-- drop trigger tr_new_assignment_notify;
+-- drop trigger tr_deleted_assignment_notify;
+-- drop trigger tr_enrollment_new_count;
+-- drop trigger tr_enrollment_delete_count;
+
+CREATE TRIGGER tr_new_assignment_notify AFTER INSERT ON Assignment
+REFERENCING
+	NEW AS N_ROW
+	FOR EACH ROW
+	INSERT INTO AssignmentNotification(body, Assignment_title, Assignment_Course_name, Assignment_Course_year)
+	VALUES ('New assignment ' CONCAT N_ROW.title CONCAT ' was added to course ' CONCAT N_ROW.course_name CONCAT '!', N_ROW.title, N_ROW.course_name, N_ROW.course_year);
+
+CREATE TRIGGER tr_deleted_assignment_notify AFTER DELETE ON Assignment
+REFERENCING
+	OLD AS O_ROW
+	FOR EACH ROW
+	INSERT INTO AssignmentNotification(body, Assignment_Course_name, Assignment_Course_year)
+	VALUES ('Assignment ' CONCAT O_ROW.title CONCAT ' from course ' CONCAT O_ROW.course_name CONCAT ' was deleted!', O_ROW.course_name, O_ROW.course_year);
+
+CREATE TRIGGER tr_enrollment_new_count AFTER INSERT ON Enrollment
+	FOR EACH ROW
+		UPDATE Course
+		SET numEnrolled=numEnrolled + 1;
+
+CREATE TRIGGER tr_enrollment_delete_count AFTER DELETE ON Enrollment
+	FOR EACH ROW
+		UPDATE Course
+		SET numEnrolled=numEnrolled - 1;
+
+-- Insert an assignment, then deleted and show the triggered notifications
+INSERT INTO Assignment (title,description,deadline,max_points,Course_name,Course_year,TeacherProfile_User_email,created_at)
+ VALUES('Test assignment 102', 'Description of test assignment 102', TIMESTAMP('2010-06-17 22:35:43'), 6, 'Python', 2009, 'dinko@yahoo.com', TIMESTAMP('2010-05-17 12:38:00'));
+DELETE FROM Assignment a
+WHERE a.title='Test assignment 102';
+SELECT * from AssignmentNotification;
+DELETE FROM AssignmentNotification;
+
+-- Show course numEnrolled, Insert enrollment, show again, Delete Enrollment, show again
+SELECT numEnrolled FROM Course
+WHERE name='Python';
+INSERT INTO ENROLLMENT (StudentProfile_User_email, Course_name,  Course_year)
+			 VALUES ('dragan@abv.bg', 'Python', 2009);
+SELECT numEnrolled FROM Course
+WHERE name='Python';
+DELETE FROM ENROLLMENT
+			WHERE StudentProfile_User_email='dragan@abv.bg' AND Course_name='Set Theory' AND Course_year=2010;
+SELECT numEnrolled FROM Course
+WHERE name='Python';
+set schema FN71100_71012;
+
+-- DROP FUNCTION Get_Speciality;
+
+-- returns the speciality of a based on a faculty number
+-- does not check if there is actually a student with this faculty number
+CREATE FUNCTION get_speciality(fn INT) RETURNS VARCHAR(255)
+	RETURN (SELECT speciality_name
+	  	FROM SpecialityLookup
+	  	WHERE fn>=fn_from AND fn<=fn_to);
+
+CREATE FUNCTION count_speciality_students(spec VARCHAR(255)) RETURNS INT
+	RETURN (SELECT COUNT(*)
+	  	FROM StudentProfile sp
+	  	WHERE spec=FN71100_71012.get_speciality(sp.faculty_number));
+
+CREATE FUNCTION get_teacher_mean_rating(teacher_email VARCHAR(255)) RETURNS DOUBLE
+	RETURN (SELECT SUM(value) / COUNT(value)
+			FROM Rating r
+			WHERE r.TeacherProfile_User_email=teacher_email);
+
+SELECT u.first_name, u.last_name, faculty_number, FN71100_71012.get_speciality(sp.faculty_number) as "Speciality"
+FROM StudentProfile sp
+LEFT JOIN User u
+on u.email=sp.User_email
+GROUP BY sp.faculty_number, u.first_name, u.last_name;
+
+SELECT s.name, FN71100_71012.count_speciality_students(s.name) as "Students"
+FROM Speciality s
+GROUP BY s.name;
+
+SELECT FN71100_71012.get_teacher_mean_rating(t.User_email) FROM
+TeacherProfile t
+GROUP BY t.User_email;
+
+SELECT * FROM RATING;

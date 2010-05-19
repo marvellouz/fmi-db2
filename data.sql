@@ -42,27 +42,21 @@ INSERT INTO Studentprofile
 INSERT INTO Studentprofile 
  VALUES(70045, 'simeon@yahoo.com');
 INSERT INTO Studentprofile 
- VALUES(70046, 'nikola@yahoo.com');
+ VALUES(71046, 'nikola@yahoo.com');
 INSERT INTO Studentprofile 
- VALUES(70047, 'violeta@yahoo.com');
+ VALUES(71047, 'violeta@yahoo.com');
 INSERT INTO Studentprofile 
- VALUES(70048, 'nikoleta@yahoo.com');
+ VALUES(71048, 'nikoleta@yahoo.com');
 INSERT INTO Teacherprofile 
  VALUES('dr', 'valentin@yahoo.com');
 INSERT INTO Teacherprofile 
  VALUES(NULL, 'dinko@yahoo.com');
 INSERT INTO Teacherprofile 
- VALUES(NULL, 'emil@yahoo.com');
-INSERT INTO Teacherprofile 
  VALUES('professor', 'dimitar@yahoo.com');
-INSERT INTO Teacherprofile 
- VALUES('professor', 'elena@yahoo.com');
 INSERT INTO Teacherprofile 
  VALUES('professor', 'maria@yahoo.com');
 INSERT INTO Teacherprofile 
- VALUES(NULL, 'petia@yahoo.com');
-INSERT INTO Teacherprofile 
- VALUES(NULL, 'ivanka@yahoo.com');
+ VALUES('assoc.prof.', 'elena@yahoo.com');
 INSERT INTO Category 
  VALUES('mathematics');
 INSERT INTO Category 
@@ -80,7 +74,7 @@ INSERT INTO Course
 INSERT INTO Course 
  VALUES('Python', 2009, 'informatics', 'pass', 2, 'dinko@yahoo.com');
 INSERT INTO Course 
- VALUES('Ruby on Rails', 2008, NULL, NULL, 44, 'petia@yahoo.com');
+ VALUES('Ruby on Rails', 2008, NULL, NULL, 44, 'dimitar@yahoo.com');
 INSERT INTO Course 
  VALUES('Algebra', 2010, 'mathematics', 'passalgebra', 33, 'elena@yahoo.com');
 INSERT INTO Forumthread (created_at,Course_name,Course_year,title,body)
@@ -175,3 +169,15 @@ INSERT INTO News (created_at,Course_name,Course_year,TeacherProfile_User_email,t
  VALUES(TIMESTAMP('2010-05-27 13:15:31'), 'Not Classical Logics For Artificial Intelligence', 2010, 'dimitar@yahoo.com', 'Test logic news 2', 'Test logic news 2. Content of the news');
 INSERT INTO News (created_at,Course_name,Course_year,TeacherProfile_User_email,title,body)
  VALUES(TIMESTAMP('2010-04-14 13:15:34'), 'Python', 2009, 'dinko@yahoo.com', 'Test python news 1', 'Test python news 1. Content of the news.');
+INSERT INTO Speciality 
+ VALUES('Informatics');
+INSERT INTO Speciality 
+ VALUES('Computer Science');
+INSERT INTO Speciality 
+ VALUES('Mathematics');
+INSERT INTO Speciality 
+ VALUES('Applied Mathematics');
+INSERT INTO Specialitylookup (fn_from,fn_to,Speciality_name)
+ VALUES(70000, 70999, 'Informatics');
+INSERT INTO Specialitylookup (fn_from,fn_to,Speciality_name)
+ VALUES(71000, 71999, 'Computer Science');
