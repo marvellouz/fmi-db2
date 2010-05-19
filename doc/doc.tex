@@ -26,6 +26,10 @@
 \newcommand{\attr}[1] {\texttt{#1}}
 \newcommand{\enti}[1] {\textbf{#1}}
 \newcommand{\re}[1] {\texttt{#1}}
+\newcommand{\la}[1] {\textsl{#1}}
+\newcommand{\rela}[1] {\textsl{#1}}
+\newcommand{\func}[1] {\texttt{#1}}
+\newcommand{\figref}[1] {Фигура \ref{#1}}
 
 \begin{document}
 
@@ -99,8 +103,73 @@
 	    \item[\enti{ForumThread}]
 	      Тема в дискусионния форум на даден курс, която има заглавие \attr{title} и тяло \attr{body}. Всяка тема може да има
 	      отговори \enti{ForumReply}. Всички теми или отговори имат автори, които са \enti{User}.
-	    \item[\enti{ForumThread}]
+	    \item[\enti{News}]
+	      Новина относно курс \enti{Course}. Автори на новините са \enti{TeacherProfile}.
 	    \item[\enti{Notification}]
 	      Известие за настъпило събитие, като например прибавяне или изтриване на \enti{Assignment}, \enti{ForumReply} и др.
 	\end{description}
+      \section{ER Модел}
+      Диаграмата на \la{Entity Relationship} модела е показана на \figref{fig:er}.
+      \begin{figure}
+	\label{fig:er}
+      	\caption{\la{Entity Relatioinship} диаграма}
+	 \centering
+	 \includegraphics[width=21cm, angle=90]{../entity_relationship.jpeg}
+      \end{figure}
+
+      \section{Релационен модел}
+      При преобразуването на \la{Entity Relationship} модела в релационен модел всички \la{много-към-едно} връзки са преобразувани
+      в две релации вместо в три, като е използван \la{foreign key} в релацията за множеството, което стои от страната \la{много}.
+      Множествата същности \enti{File} и \enti{Notification} са преобразувани в релации съответно \rela{AssignmentFile}, \rela{ResourceFile}
+      и \rela{CourseNotificaiton}, \rela{AssignmentNotification} и \rela{ForumReplyNotification}. Това е направено, за да може да се
+      създаде \la{foreign key} от страна на \enti{File} и \enti{Notification}.
+      Всички ключове са преобразувани до \emph{минимални} такива.
+
+      Диаграмата на релационния модел е показана на \figref{fig:rel}.
+      \begin{figure}
+	\label{fig:rel}
+      	\caption{Релационен модел}
+	 \centering
+	 \includegraphics[width=21cm, angle=90]{../relational_model.png}
+      \end{figure}
+
+      \section{Тригери}
+       \la{SQL} тригерите, дефинирани в проекта, са:
+       \begin{description}
+	 \item[\func{tr\_new\_reply\_notify AFTER INSERT ON ForumReply}]
+	 \item[\func{tr\_new\_assignment\_notify AFTER INSERT ON Assignment}]
+	 \item[\func{tr\_deleted\_assignment\_notify AFTER DELETE ON ForumReply}]
+	 \item Тези тригери създават известия за съответните събития.
+	 \item[\func{tr\_enrollment\_new\_count AFTER INSERT ON Enrollment}]
+	 \item[\func{tr\_enrollment\_delete\_count AFTER DELETE ON Enrollment}]
+	 \item Тези тригери увеличават или намаляват \attr{numEnrolled} на съответния курс,
+	   когато в него се запише или отпише студент.
+
+       \end{description}
+      \section{Функции}
+       \la{SQL} функциите, дефинирани в проекта, са:
+       \begin{description}
+	 \item[\func{get\_speciality(fn INT) RETURNS VARCHAR(255)}]
+	   Връща името на специалността на даден студент (по факултетен номер \attr{fn}),
+	   използвайки релацията \rel{SpecialityLookup}, в която са дефинирани интервали от факултетни номера
+	   и съответстващи имена на специалности.
+	 \item[ \func{count\_speciality\_students(spec VARCHAR(255)) RETURNS INT}]
+	   Връща броя на студентите от дадена специалност.
+	 \item[ \func{teacher\_mean\_rating(teacher\_email VARCHAR(255)) RETURNS DOUBLE}]
+	   Връща средния рейтинг на даден учител - сумата от рейтингите от всички курсове, разделена на броя на всички рейтинги.
+	 \item[ \func{all\_course\_teachers(n VARCHAR(255), y INT) RETURNS TABLE(User\_email VARCHAR(255))}]
+	   Връща релация, включваща всички учители за даден курс - титуляра и другите учители, ако има такива.
+	   \attr{n} и \attr{y} са името и годината на курса.
+	 \item[ \func{too\_old(t TIMESTAMP) RETURNS INT} ]
+	   Проверява дали времето \attr{t} не определя асоцииран с него запис кат ``прекалено стар'', т.е. по-стар от $5$ дни.  Връща $0$ или $1$.
+       \end{description}
+
+      \section{Процедури}
+       \la{SQL} процедурите, дефинирани в проекта, са:
+       \begin{description}
+	 \item[\func{cleanup\_old\_notifications}]
+	   Изтрива всички ``твърде стари'' известия според функцията \func{too\_old}.
+	\item[\func{urgent\_assignment\_notifications}]
+	   Проверява за задания, за които остава по-малко от $1$ ден до крайния срок и създава известия за тях.
+       \end{description}
 \end{document}
