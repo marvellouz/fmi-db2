@@ -169,6 +169,24 @@ INSERT INTO News (created_at,Course_name,Course_year,TeacherProfile_User_email,t
  VALUES(TIMESTAMP('2010-05-27 13:15:31'), 'Not Classical Logics For Artificial Intelligence', 2010, 'dimitar@yahoo.com', 'Test logic news 2', 'Test logic news 2. Content of the news');
 INSERT INTO News (created_at,Course_name,Course_year,TeacherProfile_User_email,title,body)
  VALUES(TIMESTAMP('2010-04-14 13:15:34'), 'Python', 2009, 'dinko@yahoo.com', 'Test python news 1', 'Test python news 1. Content of the news.');
+INSERT INTO Assignmentfile (path,name,Assignment_title,Assignment_Course_name,Assignment_Course_year)
+ VALUES('/dir1/dir2/file1.extension', 'file1', 'Test assignment 1', 'Python', 2009);
+INSERT INTO Assignmentfile (path,name,Assignment_title,Assignment_Course_name,Assignment_Course_year)
+ VALUES('/dir1/dir2/file2.extension', 'file2', 'Test assignment 1', 'Python', 2009);
+INSERT INTO Assignmentfile (path,name,Assignment_title,Assignment_Course_name,Assignment_Course_year)
+ VALUES('/dir1/dir3/file3.extension', 'file3', 'Test assignment 3', 'Set Theory', 2010);
+INSERT INTO Resource (created_at,description,Course_name,Course_year)
+ VALUES(TIMESTAMP('2010-05-17 20:46:51'), 'resource description 1', 'Python', 2009);
+INSERT INTO Resource (created_at,description,Course_name,Course_year)
+ VALUES(TIMESTAMP('2010-05-27 20:46:51'), 'resource description 2', 'Python', 2009);
+INSERT INTO Resource (created_at,description,Course_name,Course_year)
+ VALUES(TIMESTAMP('2010-06-17 20:46:51'), 'resource description 3', 'Set Theory', 2010);
+INSERT INTO Resourcefile (path,name,Resource_id)
+ VALUES('/dir1/dir3/file1.ext', 'file1', 1);
+INSERT INTO Resourcefile (path,name,Resource_id)
+ VALUES('/dir1/dir3/file2.ext', 'file2', 1);
+INSERT INTO Resourcefile (path,name,Resource_id)
+ VALUES('/dir1/dir4/file1.ext', 'file1', 3);
 INSERT INTO Speciality 
  VALUES('Informatics');
 INSERT INTO Speciality 

@@ -1,8 +1,8 @@
 set schema FN71100_71012;
 
-DROP FUNCTION FN71100_71012.count_speciality_students;
-DROP FUNCTION FN71100_71012.get_speciality;
-DROP FUNCTION FN71100_71012.get_teacher_mean_rating;
+DROP FUNCTION get_speciality;
+DROP FUNCTION count_speciality_students;
+DROP FUNCTION get_teacher_mean_rating;
 
 DROP TABLE  User ;
 DROP TABLE  StudentProfile ;
@@ -630,6 +630,24 @@ INSERT INTO News (created_at,Course_name,Course_year,TeacherProfile_User_email,t
  VALUES(TIMESTAMP('2010-05-27 13:15:31'), 'Not Classical Logics For Artificial Intelligence', 2010, 'dimitar@yahoo.com', 'Test logic news 2', 'Test logic news 2. Content of the news');
 INSERT INTO News (created_at,Course_name,Course_year,TeacherProfile_User_email,title,body)
  VALUES(TIMESTAMP('2010-04-14 13:15:34'), 'Python', 2009, 'dinko@yahoo.com', 'Test python news 1', 'Test python news 1. Content of the news.');
+INSERT INTO Assignmentfile (path,name,Assignment_title,Assignment_Course_name,Assignment_Course_year)
+ VALUES('/dir1/dir2/file1.extension', 'file1', 'Test assignment 1', 'Python', 2009);
+INSERT INTO Assignmentfile (path,name,Assignment_title,Assignment_Course_name,Assignment_Course_year)
+ VALUES('/dir1/dir2/file2.extension', 'file2', 'Test assignment 1', 'Python', 2009);
+INSERT INTO Assignmentfile (path,name,Assignment_title,Assignment_Course_name,Assignment_Course_year)
+ VALUES('/dir1/dir3/file3.extension', 'file3', 'Test assignment 3', 'Set Theory', 2010);
+INSERT INTO Resource (created_at,description,Course_name,Course_year)
+ VALUES(TIMESTAMP('2010-05-17 20:46:51'), 'resource description 1', 'Python', 2009);
+INSERT INTO Resource (created_at,description,Course_name,Course_year)
+ VALUES(TIMESTAMP('2010-05-27 20:46:51'), 'resource description 2', 'Python', 2009);
+INSERT INTO Resource (created_at,description,Course_name,Course_year)
+ VALUES(TIMESTAMP('2010-06-17 20:46:51'), 'resource description 3', 'Set Theory', 2010);
+INSERT INTO Resourcefile (path,name,Resource_id)
+ VALUES('/dir1/dir3/file1.ext', 'file1', 1);
+INSERT INTO Resourcefile (path,name,Resource_id)
+ VALUES('/dir1/dir3/file2.ext', 'file2', 1);
+INSERT INTO Resourcefile (path,name,Resource_id)
+ VALUES('/dir1/dir4/file1.ext', 'file1', 3);
 INSERT INTO Speciality 
  VALUES('Informatics');
 INSERT INTO Speciality 
@@ -714,7 +732,7 @@ CREATE FUNCTION count_speciality_students(spec VARCHAR(255)) RETURNS INT
 	  	WHERE spec=FN71100_71012.get_speciality(sp.faculty_number));
 
 CREATE FUNCTION get_teacher_mean_rating(teacher_email VARCHAR(255)) RETURNS DOUBLE
-	RETURN (SELECT SUM(value) / COUNT(value)
+	RETURN (SELECT 1.0*SUM(value) / COUNT(value)
 			FROM Rating r
 			WHERE r.TeacherProfile_User_email=teacher_email);
 
@@ -722,13 +740,13 @@ SELECT u.first_name, u.last_name, faculty_number, FN71100_71012.get_speciality(s
 FROM StudentProfile sp
 LEFT JOIN User u
 on u.email=sp.User_email
-GROUP BY sp.faculty_number, u.first_name, u.last_name;
+GROUP BY sp.faculty_number, u.first_name, u.last_name ;
 
 SELECT s.name, FN71100_71012.count_speciality_students(s.name) as "Students"
 FROM Speciality s
 GROUP BY s.name;
 
-SELECT FN71100_71012.get_teacher_mean_rating(t.User_email) FROM
+SELECT t.User_email, FN71100_71012.get_teacher_mean_rating(t.User_email) FROM
 TeacherProfile t
 GROUP BY t.User_email;
 
