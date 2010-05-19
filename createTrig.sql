@@ -63,14 +63,14 @@ SELECT numEnrolled FROM Course
 WHERE name='Python';
 
 -- Insert into ForumReply 2 rows and then select all notifications to show there appeared 2 notifications 
-INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('valentin@yahoo.com', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
+INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('valentin@yahoo.com', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
 
-INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('dragan@abv.bg', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
+INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('dragan@abv.bg', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
 
-INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('dragan@abv.bg', TIMESTAMP('2010-05-19 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
+INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('dragan@abv.bg', TIMESTAMP('2010-05-19 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
 
 
 select * from ForumReplyNotification;

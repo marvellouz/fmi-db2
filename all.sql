@@ -4,6 +4,10 @@ DROP FUNCTION count_speciality_students; --NOTE: cout_speciality_students depend
 DROP FUNCTION get_speciality;
 DROP FUNCTION teacher_mean_rating;
 DROP FUNCTION all_course_teachers;
+DROP FUNCTION too_old;
+
+DROP PROCEDURE cleanup_old_notifications;
+DROP PROCEDURE urgent_assignment_notifications;
 
 DROP TABLE  User ;
 DROP TABLE  StudentProfile ;
@@ -107,7 +111,8 @@ CREATE  TABLE  ForumThread (
   Course_year SMALLINT NOT NULL ,
   title VARCHAR(255) NOT NULL ,
   body VARCHAR(1644) NOT NULL ,
-  PRIMARY KEY (created_at, title) ,
+  User_email VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (created_at, User_email) ,
   CONSTRAINT fk_ForumThread_Course
     FOREIGN KEY (Course_name , Course_year )
     REFERENCES Course (name , year )
@@ -121,7 +126,7 @@ CREATE  TABLE  ForumReply (
   User_email VARCHAR(255) NOT NULL ,
   created_at TIMESTAMP NOT NULL WITH DEFAULT,
   ForumThread_created_at TIMESTAMP NOT NULL ,
-  ForumThread_title VARCHAR(255) NOT NULL ,
+  ForumThread_User_email VARCHAR(255) NOT NULL ,
   -- parent
   ForumReply_created_at TIMESTAMP,
   ForumReply_User_email VARCHAR(255),
@@ -146,8 +151,8 @@ ALTER TABLE ForumReply
 -- circular dependencies workaround
 ALTER TABLE ForumReply ADD
     CONSTRAINT fk_ForumReply_ForumThread
-    FOREIGN KEY (ForumThread_created_at , ForumThread_title )
-    REFERENCES ForumThread (created_at , title )
+    FOREIGN KEY (ForumThread_created_at , ForumThread_User_email )
+    REFERENCES ForumThread (created_at , User_email )
     ON DELETE CASCADE;
 
 CREATE INDEX fk_ForumThread_Course ON ForumThread (Course_name ASC, Course_year ASC) ;
@@ -156,7 +161,7 @@ CREATE INDEX fk_ForumReply_User ON ForumReply (User_email ASC) ;
 
 CREATE INDEX fk_ForumReply_ForumReply ON ForumReply (ForumReply_created_at ASC, ForumReply_User_email ASC) ;
 
-CREATE INDEX fk_ForumReply_ForumThread ON ForumReply (ForumThread_created_at ASC, ForumThread_title ASC) ;
+CREATE INDEX fk_ForumReply_ForumThread ON ForumReply (ForumThread_created_at ASC, ForumThread_User_email ASC) ;
 
 -- -----------------------------------------------------
 -- Table Enrollment
@@ -519,6 +524,8 @@ INSERT INTO Teacherprofile
  VALUES('professor', 'maria@yahoo.com');
 INSERT INTO Teacherprofile 
  VALUES('assoc.prof.', 'elena@yahoo.com');
+INSERT INTO Teacherprofile 
+ VALUES('as.', 'dragan@abv.bg');
 INSERT INTO Category 
  VALUES('mathematics');
 INSERT INTO Category 
@@ -539,22 +546,22 @@ INSERT INTO Course
  VALUES('Ruby on Rails', 2008, NULL, NULL, 44, 'dimitar@yahoo.com');
 INSERT INTO Course 
  VALUES('Algebra', 2010, 'mathematics', 'passalgebra', 33, 'elena@yahoo.com');
-INSERT INTO Forumthread (created_at,Course_name,Course_year,title,body)
- VALUES(TIMESTAMP('2010-05-17 13:16:23'), 'Not Classical Logics For Artificial Intelligence', 2010, 'Test title of thread', 'Test body of thread');
-INSERT INTO Forumthread (created_at,Course_name,Course_year,title,body)
- VALUES(TIMESTAMP('2010-05-17 13:16:31'), 'Set Theory', 2010, 'Another title', 'This is some small body with a question or something.');
-INSERT INTO Forumthread (created_at,Course_name,Course_year,title,body)
- VALUES(TIMESTAMP('2010-05-17 13:16:34'), 'Not Classical Logics For Artificial Intelligence', 2010, 'Test title of thread 2', 'Test body of thread 2');
-INSERT INTO Forumthread (created_at,Course_name,Course_year,title,body)
- VALUES(TIMESTAMP('2010-05-17 13:16:37'), 'Python', 2009, 'Test title of thread 3', 'Test body of thread 3');
-INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('valentin@yahoo.com', TIMESTAMP('2010-05-17 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
-INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('dinko@yahoo.com', TIMESTAMP('2010-05-17 13:19:41'), TIMESTAMP('2010-05-17 13:16:31'), 'Another title', NULL, NULL, 'Hi Archers... :) Is it difficult to create a LiveArch...?', 'Hi there everybody I wish to create a Live Lightweight Arch Distro, packed with stuff compiled from source, mostly engineering apps...Is this "Mission Impossible", or Just "Mission difficult"...Tried to use Knoppix for that... there are rather well detailed Howtos in Google... but, as I was trying to set up the environment to build my own stuff from source, the libs and all, Synaptic said some of them were not Installable... although it installed some stuff ...I was using the LiveCD... to start from a minimal base... is this a LiceCD issue, or is it to be expected in the LiveDVD also... ? Happened with the 6.3 Knoppix... So I wanna try Arch...Shylock made a nice Live distro, ArchBang, but it cannot be remastered and rebuilt so as to create an Iso and burn it into a CD (DVD ) with all the stuff that I want to put in there... can it...? Think of it as my "Lightweight" B-52, ROFL , as ArchBang would be a sort of Lightweight F23 Raptor... BRGDS Alex', 2, 0);
-INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('elena@yahoo.com', TIMESTAMP('2010-05-17 13:22:32'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', TIMESTAMP('2010-05-17 13:46:49'), 'valentin@yahoo.com', 'Problems after changing controlling boot distro', 'Hello, I have 2 500gb drives. Arch used to be /dev/sda1 with /home on /dev/sda6. I have decided to hook up both my drives and now I have PClinux on /dev/sda1 with the home on /dev/sda6. I setup grub on PClinux to boot Arch on /dev/sdb1 without issue. Now the problem I have is when I boot Arch everything goes fine until I login as user. It gives some sort of cant find HOME= defaulting to default (home is on /dev/sdb6). I cant start X or anything. Anyone have any ideas without doing a re-install?', 3, 2);
-INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('petkan@abv.bg', TIMESTAMP('2010-05-17 13:27:15'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', TIMESTAMP('2010-05-17 13:22:32'), 'elena@yahoo.com', 'Im thinking I am having permission problems with oblogout and openbox in arch.', 'I am currently running Arch with openbox. I have setup oblogout, but the only buttons that work are Logout and cancel. I cant get shutdown, reboot, suspend, or lock to work. Any ideas?', 0, 9);
+INSERT INTO Forumthread (User_email,created_at,Course_name,Course_year,title,body)
+ VALUES('ivan@abv.bg', TIMESTAMP('2010-05-17 13:16:23'), 'Not Classical Logics For Artificial Intelligence', 2010, 'Test title of thread', 'Test body of thread');
+INSERT INTO Forumthread (User_email,created_at,Course_name,Course_year,title,body)
+ VALUES('ivan@abv.bg', TIMESTAMP('2010-05-17 13:16:31'), 'Set Theory', 2010, 'Another title', 'This is some small body with a question or something.');
+INSERT INTO Forumthread (User_email,created_at,Course_name,Course_year,title,body)
+ VALUES('ivan@abv.bg', TIMESTAMP('2010-05-17 13:16:34'), 'Not Classical Logics For Artificial Intelligence', 2010, 'Test title of thread 2', 'Test body of thread 2');
+INSERT INTO Forumthread (User_email,created_at,Course_name,Course_year,title,body)
+ VALUES('petkan@abv.bg', TIMESTAMP('2010-05-17 13:16:37'), 'Python', 2009, 'Test title of thread 3', 'Test body of thread 3');
+INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('valentin@yahoo.com', TIMESTAMP('2010-05-17 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
+INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('dinko@yahoo.com', TIMESTAMP('2010-05-17 13:19:41'), TIMESTAMP('2010-05-17 13:16:31'), 'ivan@abv.bg', NULL, NULL, 'Hi Archers... :) Is it difficult to create a LiveArch...?', 'Hi there everybody I wish to create a Live Lightweight Arch Distro, packed with stuff compiled from source, mostly engineering apps...Is this "Mission Impossible", or Just "Mission difficult"...Tried to use Knoppix for that... there are rather well detailed Howtos in Google... but, as I was trying to set up the environment to build my own stuff from source, the libs and all, Synaptic said some of them were not Installable... although it installed some stuff ...I was using the LiveCD... to start from a minimal base... is this a LiceCD issue, or is it to be expected in the LiveDVD also... ? Happened with the 6.3 Knoppix... So I wanna try Arch...Shylock made a nice Live distro, ArchBang, but it cannot be remastered and rebuilt so as to create an Iso and burn it into a CD (DVD ) with all the stuff that I want to put in there... can it...? Think of it as my "Lightweight" B-52, ROFL , as ArchBang would be a sort of Lightweight F23 Raptor... BRGDS Alex', 2, 0);
+INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('elena@yahoo.com', TIMESTAMP('2010-05-17 13:22:32'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', TIMESTAMP('2010-05-17 13:46:49'), 'valentin@yahoo.com', 'Problems after changing controlling boot distro', 'Hello, I have 2 500gb drives. Arch used to be /dev/sda1 with /home on /dev/sda6. I have decided to hook up both my drives and now I have PClinux on /dev/sda1 with the home on /dev/sda6. I setup grub on PClinux to boot Arch on /dev/sdb1 without issue. Now the problem I have is when I boot Arch everything goes fine until I login as user. It gives some sort of cant find HOME= defaulting to default (home is on /dev/sdb6). I cant start X or anything. Anyone have any ideas without doing a re-install?', 3, 2);
+INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('petkan@abv.bg', TIMESTAMP('2010-05-17 13:27:15'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', TIMESTAMP('2010-05-17 13:22:32'), 'elena@yahoo.com', 'Im thinking I am having permission problems with oblogout and openbox in arch.', 'I am currently running Arch with openbox. I have setup oblogout, but the only buttons that work are Logout and cancel. I cant get shutdown, reboot, suspend, or lock to work. Any ideas?', 0, 9);
 INSERT INTO Enrollment 
  VALUES('ivan@abv.bg', 'Not Classical Logics For Artificial Intelligence', 2010);
 INSERT INTO Enrollment 
@@ -726,15 +733,14 @@ SELECT numEnrolled FROM Course
 WHERE name='Python';
 
 -- Insert into ForumReply 2 rows and then select all notifications to show there appeared 2 notifications 
-INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('valentin@yahoo.com', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
+INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('valentin@yahoo.com', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
 
-INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('dragan@abv.bg', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
+INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('dragan@abv.bg', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
 
-INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('dragan@abv.bg', TIMESTAMP('2010-05-19 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
-
+INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('dragan@abv.bg', TIMESTAMP('2010-05-19 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
 
 
 select * from ForumReplyNotification;

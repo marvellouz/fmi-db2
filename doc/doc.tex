@@ -1,0 +1,106 @@
+\documentclass[a4paper,10pt, leqno]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[bulgarian]{babel}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\usepackage{amsmath}
+\usepackage[unicode]{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  pdftitle={Проект по ПФНРсСУБД2},
+  pdfauthor={Валентина Динкова, Емил Станчев},
+  pdfsubject={Бази от данни},
+  pdfcreator={Емил Станчев, Валентина Динкова}
+}
+\usepackage{yfonts}
+\usepackage{amsthm}
+\usepackage {amssymb}
+\usepackage{graphicx}
+% for source code inclusion
+\usepackage{listings}
+\renewcommand{\lstlistingname}{\bfseries Файл}
+\lstset{ language=Matlab, caption=\lstname, numbers=left, numberstyle=\tiny}
+\lstset{keywordstyle=\bfseries}
+\lstset{commentstyle=\color{darkgray}}
+%\lstset{frame=T}
+\newcommand{\attr}[1] {\texttt{#1}}
+\newcommand{\enti}[1] {\textbf{#1}}
+\newcommand{\re}[1] {\texttt{#1}}
+
+\begin{document}
+
+% TITLE PAGE
+\begin{titlepage}
+  \begin{center}
+    \textsc{СУ ``Св. Климент Охридски''\\
+    Факултет по математика и информатика
+    }\\[5cm]
+
+    \textsc{\large Курсов проект по \\
+	   	   Проектиране на физическо ниво и реализация със СУБД II
+    }\\[0.5cm]
+    \HRule \\[0.4cm]
+    { \Large \bfseries База от данни за система за електронно обучение\\ \\[0.4cm]
+    }\\[0.4cm]
+    \HRule \\[6cm]
+    \begin{minipage}{0.49\textwidth}
+      \begin{flushleft} \large
+	\emph{Автори:}\\
+	Валентина Динкова,\\
+	{\small ф.н.71112}\\
+	Емил Станчев\\
+	{\small ф.н.71100}\\
+      \end{flushleft}
+    \end{minipage}
+    \begin{minipage}{0.49\textwidth}
+      \begin{flushright} \large
+	\emph{Ръководители:} \\
+	доц. В. Димитров\\
+	ас. Р. Горанова
+      \end{flushright}
+    \end{minipage}
+    \vfill
+    {\large \today}
+  \end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+	\section{Описание}
+	  Проектът представлява модел и примерна реализация на база от данни, предназначена за приложение за електронно обучение.
+	  В него учителите качват материали за различни курсове, студентите обсъждат във форум различни теми, свързани с курсовете,
+	  както и	административни въпроси. Учителите могат да качват задания с определен краен срок, за които студентите получават оценка.
+	  Студентите могат да дават оценка на преподавателите в даден курс. Всички потребители се идентифицират с парола и email адрес.
+
+	\section{Множества същности}
+	Най-важните множества същности са:
+	\begin{description}
+	    \item[\enti{Course}]
+	      Курс с име \attr{name} за дадена година. Може да има курсове с еднакви имена в различни години, затова ключът се състои
+	      от името и годината на курса. Освен това има опционална парола \attr{password} за записване на курса. Пази се и броят на записаните
+	      в курса студенти \attr{numEnrolled}. Всеки курс има един титуляр \attr{titular} и други учители \re{OtherTeachers}.
+	      Всеки курс има категория \enti{Category}.
+	      Всеки студент \enti{StudentProfile}, записан чрез \re{Enrolled} получава оценка за дадения курс \re{CourseGrade}, която има стойност
+	      \attr{value}.
+	    \item[\enti{User}]
+	      Потребител, който има парола \attr{password}, \attr{email}, и имена \attr{first name}, \attr{last name}.
+	      Всеки потребител има поне едно от \enti{StudentProfile} и \\
+	      \enti{TeacherProfile}, които са слаби множества същности.
+	    \item[\enti{Assignment}]
+	      Задание, което има краен срок \attr{deadline}, максимален брой точки, които дава заданието \attr{max points}, заглавие \attr{title},
+	      описание \attr{description}, уникален номер \attr{number} и дата на създаване \attr{created at}. Авторът на всеки \enti{Assignment}
+	      е \enti{TeacherProfile} на някой \enti{User}. Всеки \enti{Assignment} може да има чрез \re{Attached} прикачени файлове \enti{File},
+	      които имат име \attr{name}
+	      и път \attr{path}, който е ключ за файла. Всяко задание принадлежи на даден курс.
+	    \item[\enti{Resource}]
+	      Ресурс, който принадлежи на даден \enti{Course}, напр. лекция, публикация и др. 
+	      Ресурсът може да има прикачени файлове.
+	    \item[\enti{ForumThread}]
+	      Тема в дискусионния форум на даден курс, която има заглавие \attr{title} и тяло \attr{body}. Всяка тема може да има
+	      отговори \enti{ForumReply}. Всички теми или отговори имат автори, които са \enti{User}.
+	    \item[\enti{ForumThread}]
+	    \item[\enti{Notification}]
+	      Известие за настъпило събитие, като например прибавяне или изтриване на \enti{Assignment}, \enti{ForumReply} и др.
+	\end{description}
+\end{document}

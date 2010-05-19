@@ -4,6 +4,10 @@ DROP FUNCTION count_speciality_students; --NOTE: cout_speciality_students depend
 DROP FUNCTION get_speciality;
 DROP FUNCTION teacher_mean_rating;
 DROP FUNCTION all_course_teachers;
+DROP FUNCTION too_old;
+
+DROP PROCEDURE cleanup_old_notifications;
+DROP PROCEDURE urgent_assignment_notifications;
 
 DROP TABLE  User ;
 DROP TABLE  StudentProfile ;
@@ -107,7 +111,8 @@ CREATE  TABLE  ForumThread (
   Course_year SMALLINT NOT NULL ,
   title VARCHAR(255) NOT NULL ,
   body VARCHAR(1644) NOT NULL ,
-  PRIMARY KEY (created_at, title) ,
+  User_email VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (created_at, User_email) ,
   CONSTRAINT fk_ForumThread_Course
     FOREIGN KEY (Course_name , Course_year )
     REFERENCES Course (name , year )
@@ -121,7 +126,7 @@ CREATE  TABLE  ForumReply (
   User_email VARCHAR(255) NOT NULL ,
   created_at TIMESTAMP NOT NULL WITH DEFAULT,
   ForumThread_created_at TIMESTAMP NOT NULL ,
-  ForumThread_title VARCHAR(255) NOT NULL ,
+  ForumThread_User_email VARCHAR(255) NOT NULL ,
   -- parent
   ForumReply_created_at TIMESTAMP,
   ForumReply_User_email VARCHAR(255),
@@ -146,8 +151,8 @@ ALTER TABLE ForumReply
 -- circular dependencies workaround
 ALTER TABLE ForumReply ADD
     CONSTRAINT fk_ForumReply_ForumThread
-    FOREIGN KEY (ForumThread_created_at , ForumThread_title )
-    REFERENCES ForumThread (created_at , title )
+    FOREIGN KEY (ForumThread_created_at , ForumThread_User_email )
+    REFERENCES ForumThread (created_at , User_email )
     ON DELETE CASCADE;
 
 CREATE INDEX fk_ForumThread_Course ON ForumThread (Course_name ASC, Course_year ASC) ;
@@ -156,7 +161,7 @@ CREATE INDEX fk_ForumReply_User ON ForumReply (User_email ASC) ;
 
 CREATE INDEX fk_ForumReply_ForumReply ON ForumReply (ForumReply_created_at ASC, ForumReply_User_email ASC) ;
 
-CREATE INDEX fk_ForumReply_ForumThread ON ForumReply (ForumThread_created_at ASC, ForumThread_title ASC) ;
+CREATE INDEX fk_ForumReply_ForumThread ON ForumReply (ForumThread_created_at ASC, ForumThread_User_email ASC) ;
 
 -- -----------------------------------------------------
 -- Table Enrollment
