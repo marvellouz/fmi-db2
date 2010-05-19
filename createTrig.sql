@@ -73,5 +73,4 @@ INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread
  VALUES('dragan@abv.bg', TIMESTAMP('2010-05-19 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
 
 
-
 select * from ForumReplyNotification;
