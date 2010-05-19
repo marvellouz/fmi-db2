@@ -203,10 +203,5 @@
 	   Информация за студентите, събрана от \la{StudentProfile} и \la{User}.
 	\item[\func{TeacherInfoView}]
 	   Информация за учителите, събрана от \la{TeacherProfile} и \la{User}.
-
-	 \item[\func{TeacherStudentView}]
-	   Информация за всички учители, които са и студенти.
-	\item[\func{CourseInfoView}]
-	   Информация за курсовете, техните категории и преподаватели.
        \end{description}
 \end{document}
