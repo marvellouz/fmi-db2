@@ -1,8 +1,9 @@
 set schema FN71100_71012;
 
+DROP FUNCTION count_speciality_students; --NOTE: cout_speciality_students depends on get_speciality
 DROP FUNCTION get_speciality;
-DROP FUNCTION count_speciality_students;
-DROP FUNCTION get_teacher_mean_rating;
+DROP FUNCTION teacher_mean_rating;
+DROP FUNCTION all_course_teachers;
 
 DROP TABLE  User ;
 DROP TABLE  StudentProfile ;
