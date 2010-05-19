@@ -133,6 +133,29 @@
 	 \includegraphics[width=21cm, angle=90]{../relational_model.png}
       \end{figure}
 
+      \section{Ограничения}
+      Всички подходящи \la{foreign key} ограничения са наложени. Всички атрибути като \attr{numEnrolled}, \attr{num\_likes} и т.н.
+      са ограничени до неотрицателни стойности. Стойността на \attr{year} атрибута на \rel{Course} е ограничена до
+      число между $1000$ и $9999$. За всеки \rel{ForumReply} е наложено ограничението той да е създаден по-късно от родителя си.
+      Всички пароли се изисква да са с дължина най-малко $5$. За релацията \rel{SpecialityLookup} се проверява дали \attr{fn\_from} $\leq$ \attr{fn\_to}.
+
+
+      \section{Функции}
+       \begin{description}
+	 \item[\func{get\_speciality(fn INT) RETURNS VARCHAR(255)}]
+	   Връща името на специалността на даден студент (по факултетен номер \attr{fn}),
+	   използвайки релацията \rel{SpecialityLookup}, в която са дефинирани интервали от факултетни номера
+	   и съответстващи имена на специалности. 	 \item[ \func{count\_speciality\_students(spec VARCHAR(255)) RETURNS INT}]
+	   Връща броя на студентите от дадена специалност.
+	 \item[ \func{teacher\_mean\_rating(teacher\_email VARCHAR(255)) RETURNS DOUBLE}]
+	   Връща средния рейтинг на даден учител - сумата от рейтингите от всички курсове, разделена на броя на всички рейтинги.
+	 \item[ \func{all\_course\_teachers(n VARCHAR(255), y INT) RETURNS TABLE(User\_email VARCHAR(255))}]
+	   Връща релация, включваща всички учители за даден курс - титуляра и другите учители, ако има такива.
+	   \attr{n} и \attr{y} са името и годината на курса.
+	 \item[ \func{too\_old(t TIMESTAMP) RETURNS INT} ]
+	   Проверява дали времето \attr{t} не определя асоцииран с него запис кат ``прекалено стар'', т.е. по-стар от $5$ дни.  Връща $0$ или $1$.
+       \end{description}
+
       \section{Тригери}
        \la{SQL} тригерите, дефинирани в проекта, са:
        \begin{description}

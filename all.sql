@@ -39,22 +39,23 @@ CREATE  TABLE  User (
   email VARCHAR(255) NOT NULL ,
   first_name VARCHAR(45) NOT NULL ,
   last_name VARCHAR(45) NOT NULL ,
-  password VARCHAR(45) NOT NULL ,
-  PRIMARY KEY (email) );
+  password VARCHAR(45) NOT NULL CHECK(length(password) > 4),
+  PRIMARY KEY (email)
+);
 
 -- -----------------------------------------------------
 -- Table StudentProfile
 -- -----------------------------------------------------
 CREATE  TABLE  StudentProfile (
   faculty_number INT NOT NULL ,
-  User_email VARCHAR(255) NOT NULL ,
+  User_email VARCHAR(255) NOT NULL,
   PRIMARY KEY (User_email) ,
   CONSTRAINT fk_StudentProfile_User
     FOREIGN KEY (User_email )
     REFERENCES User (email )
     ON DELETE CASCADE
     ON UPDATE RESTRICT
-    );
+);
 
 -- -----------------------------------------------------
 -- Table TeacherProfile
@@ -62,19 +63,20 @@ CREATE  TABLE  StudentProfile (
 CREATE  TABLE  TeacherProfile (
   title VARCHAR(45),
   User_email VARCHAR(255) NOT NULL,
-  PRIMARY KEY (User_email) ,
+  PRIMARY KEY (User_email),
   CONSTRAINT fk_TeacherProfile_User
     FOREIGN KEY (User_email )
     REFERENCES User (email )
     ON DELETE CASCADE
-    );
+);
 
 -- -----------------------------------------------------
 -- Table Category
 -- -----------------------------------------------------
 CREATE  TABLE  Category (
   name VARCHAR(45) NOT NULL ,
-  PRIMARY KEY (name) );
+  PRIMARY KEY (name)
+);
 
 -- -----------------------------------------------------
 -- Table Course
@@ -82,10 +84,10 @@ CREATE  TABLE  Category (
 
 CREATE  TABLE  Course (
   name VARCHAR(255) NOT NULL ,
-  year SMALLINT NOT NULL ,
+  year SMALLINT NOT NULL CHECK(year>1000 AND year<=9999),
   Category_name VARCHAR(45) ,
-  password VARCHAR(45),
-  numEnrolled INT NOT NULL DEFAULT 0 ,
+  password VARCHAR(45) CHECK(length(password)>3),
+  numEnrolled INT NOT NULL DEFAULT 0 CHECK( numEnrolled >= 0 ), --unsigned
   TeacherProfile_User_email VARCHAR(255),
   PRIMARY KEY (name, year),
   CONSTRAINT fk_Course_Category
@@ -96,7 +98,8 @@ CREATE  TABLE  Course (
     FOREIGN KEY (TeacherProfile_User_email )
     REFERENCES TeacherProfile (User_email )
     ON DELETE SET NULL
-    ON UPDATE NO ACTION);
+    ON UPDATE NO ACTION
+);
 
 CREATE INDEX fk_Course_Category ON Course (Category_name ASC) ;
 
@@ -128,18 +131,21 @@ CREATE  TABLE  ForumReply (
   ForumThread_created_at TIMESTAMP NOT NULL ,
   ForumThread_User_email VARCHAR(255) NOT NULL ,
   -- parent
-  ForumReply_created_at TIMESTAMP,
+  ForumReply_created_at TIMESTAMP, 
   ForumReply_User_email VARCHAR(255),
   title VARCHAR(255) NOT NULL ,
   body VARCHAR(6144) NOT NULL ,
-  num_likes INT NOT NULL DEFAULT 0 , --unsigned
-  num_edits INT NOT NULL DEFAULT 0 ,
+  num_likes INT NOT NULL DEFAULT 0
+  	CHECK(num_likes >= 0), --unsigned
+  num_edits INT NOT NULL DEFAULT 0
+  	CHECK(num_edits >= 0), --unsigned
   PRIMARY KEY (User_email, created_at) ,
   CONSTRAINT fk_ForumReply_User
     FOREIGN KEY (User_email )
     REFERENCES User (email )
-    ON DELETE CASCADE
-   );
+    ON DELETE CASCADE,
+  CHECK (created_at > ForumReply_created_at)
+);
 
 
 ALTER TABLE ForumReply
@@ -190,7 +196,7 @@ CREATE INDEX fk_Enrollment_Course ON Enrollment (Course_name ASC, Course_year AS
 -- Table CourseGrade
 -- -----------------------------------------------------
 CREATE  TABLE  CourseGrade (
-  value SMALLINT NOT NULL DEFAULT 0 , --unsigned
+  value SMALLINT NOT NULL DEFAULT 0 CHECK (value>=0), --unsigned
   StudentProfile_User_email VARCHAR(255) NOT NULL ,
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
@@ -247,7 +253,7 @@ CREATE  TABLE  Assignment (
   title VARCHAR(255) NOT NULL ,
   description VARCHAR(6144) NOT NULL ,
   deadline TIMESTAMP NOT NULL WITH DEFAULT,
-  max_points SMALLINT NOT NULL , --unsigned
+  max_points SMALLINT NOT NULL CHECK (max_points>=0), --unsigned
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
   TeacherProfile_User_email VARCHAR(255),
@@ -271,7 +277,7 @@ CREATE INDEX fk_Assignment_TeacherProfile ON Assignment (TeacherProfile_User_ema
 -- Table AssignmentGrade
 -- -----------------------------------------------------
 CREATE  TABLE  AssignmentGrade (
-  value SMALLINT NOT NULL , -- unsigned
+  value SMALLINT NOT NULL CHECK(value>=0), -- unsigned
   StudentProfile_User_email VARCHAR(255) NOT NULL ,
   Assignment_title VARCHAR(255) NOT NULL ,
   Assignment_Course_name VARCHAR(255) NOT NULL ,
@@ -454,15 +460,18 @@ CREATE  TABLE  Speciality (
 -- Table SpecialityLookup
 -- -----------------------------------------------------
 CREATE  TABLE  SpecialityLookup (
-  fn_from INT NOT NULL ,
-  fn_to INT NOT NULL ,
+  fn_from INT NOT NULL UNIQUE,
+  fn_to INT NOT NULL UNIQUE,
   Speciality_name VARCHAR(255) NOT NULL ,
   PRIMARY KEY (fn_from, fn_to, Speciality_name) ,
   CONSTRAINT fk_SpecialityLookup_Speciality
     FOREIGN KEY (Speciality_name )
     REFERENCES Speciality (name )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    ON UPDATE NO ACTION,
+  CONSTRAINT range_check
+  	CHECK (fn_from < fn_to)
+);
 
 CREATE INDEX fk_SpecialityLookup_Speciality ON SpecialityLookup (Speciality_name ASC) ;
 set schema FN71100_71012;
@@ -559,9 +568,9 @@ INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread
 INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
  VALUES('dinko@yahoo.com', TIMESTAMP('2010-05-17 13:19:41'), TIMESTAMP('2010-05-17 13:16:31'), 'ivan@abv.bg', NULL, NULL, 'Hi Archers... :) Is it difficult to create a LiveArch...?', 'Hi there everybody I wish to create a Live Lightweight Arch Distro, packed with stuff compiled from source, mostly engineering apps...Is this "Mission Impossible", or Just "Mission difficult"...Tried to use Knoppix for that... there are rather well detailed Howtos in Google... but, as I was trying to set up the environment to build my own stuff from source, the libs and all, Synaptic said some of them were not Installable... although it installed some stuff ...I was using the LiveCD... to start from a minimal base... is this a LiceCD issue, or is it to be expected in the LiveDVD also... ? Happened with the 6.3 Knoppix... So I wanna try Arch...Shylock made a nice Live distro, ArchBang, but it cannot be remastered and rebuilt so as to create an Iso and burn it into a CD (DVD ) with all the stuff that I want to put in there... can it...? Think of it as my "Lightweight" B-52, ROFL , as ArchBang would be a sort of Lightweight F23 Raptor... BRGDS Alex', 2, 0);
 INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('elena@yahoo.com', TIMESTAMP('2010-05-17 13:22:32'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', TIMESTAMP('2010-05-17 13:46:49'), 'valentin@yahoo.com', 'Problems after changing controlling boot distro', 'Hello, I have 2 500gb drives. Arch used to be /dev/sda1 with /home on /dev/sda6. I have decided to hook up both my drives and now I have PClinux on /dev/sda1 with the home on /dev/sda6. I setup grub on PClinux to boot Arch on /dev/sdb1 without issue. Now the problem I have is when I boot Arch everything goes fine until I login as user. It gives some sort of cant find HOME= defaulting to default (home is on /dev/sdb6). I cant start X or anything. Anyone have any ideas without doing a re-install?', 3, 2);
+ VALUES('elena@yahoo.com', TIMESTAMP('2010-05-17 13:55:32'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', TIMESTAMP('2010-05-17 13:46:49'), 'valentin@yahoo.com', 'Problems after changing controlling boot distro', 'Hello, I have 2 500gb drives. Arch used to be /dev/sda1 with /home on /dev/sda6. I have decided to hook up both my drives and now I have PClinux on /dev/sda1 with the home on /dev/sda6. I setup grub on PClinux to boot Arch on /dev/sdb1 without issue. Now the problem I have is when I boot Arch everything goes fine until I login as user. It gives some sort of cant find HOME= defaulting to default (home is on /dev/sdb6). I cant start X or anything. Anyone have any ideas without doing a re-install?', 3, 2);
 INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('petkan@abv.bg', TIMESTAMP('2010-05-17 13:27:15'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', TIMESTAMP('2010-05-17 13:22:32'), 'elena@yahoo.com', 'Im thinking I am having permission problems with oblogout and openbox in arch.', 'I am currently running Arch with openbox. I have setup oblogout, but the only buttons that work are Logout and cancel. I cant get shutdown, reboot, suspend, or lock to work. Any ideas?', 0, 9);
+ VALUES('petkan@abv.bg', TIMESTAMP('2010-05-17 13:58:15'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', TIMESTAMP('2010-05-17 13:55:32'), 'elena@yahoo.com', 'Im thinking I am having permission problems with oblogout and openbox in arch.', 'I am currently running Arch with openbox. I have setup oblogout, but the only buttons that work are Logout and cancel. I cant get shutdown, reboot, suspend, or lock to work. Any ideas?', 0, 9);
 INSERT INTO Enrollment 
  VALUES('ivan@abv.bg', 'Not Classical Logics For Artificial Intelligence', 2010);
 INSERT INTO Enrollment 

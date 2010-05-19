@@ -39,22 +39,23 @@ CREATE  TABLE  User (
   email VARCHAR(255) NOT NULL ,
   first_name VARCHAR(45) NOT NULL ,
   last_name VARCHAR(45) NOT NULL ,
-  password VARCHAR(45) NOT NULL ,
-  PRIMARY KEY (email) );
+  password VARCHAR(45) NOT NULL CHECK(length(password) > 4),
+  PRIMARY KEY (email)
+);
 
 -- -----------------------------------------------------
 -- Table StudentProfile
 -- -----------------------------------------------------
 CREATE  TABLE  StudentProfile (
   faculty_number INT NOT NULL ,
-  User_email VARCHAR(255) NOT NULL ,
+  User_email VARCHAR(255) NOT NULL,
   PRIMARY KEY (User_email) ,
   CONSTRAINT fk_StudentProfile_User
     FOREIGN KEY (User_email )
     REFERENCES User (email )
     ON DELETE CASCADE
     ON UPDATE RESTRICT
-    );
+);
 
 -- -----------------------------------------------------
 -- Table TeacherProfile
@@ -62,19 +63,20 @@ CREATE  TABLE  StudentProfile (
 CREATE  TABLE  TeacherProfile (
   title VARCHAR(45),
   User_email VARCHAR(255) NOT NULL,
-  PRIMARY KEY (User_email) ,
+  PRIMARY KEY (User_email),
   CONSTRAINT fk_TeacherProfile_User
     FOREIGN KEY (User_email )
     REFERENCES User (email )
     ON DELETE CASCADE
-    );
+);
 
 -- -----------------------------------------------------
 -- Table Category
 -- -----------------------------------------------------
 CREATE  TABLE  Category (
   name VARCHAR(45) NOT NULL ,
-  PRIMARY KEY (name) );
+  PRIMARY KEY (name)
+);
 
 -- -----------------------------------------------------
 -- Table Course
@@ -82,10 +84,10 @@ CREATE  TABLE  Category (
 
 CREATE  TABLE  Course (
   name VARCHAR(255) NOT NULL ,
-  year SMALLINT NOT NULL ,
+  year SMALLINT NOT NULL CHECK(year>1000 AND year<=9999),
   Category_name VARCHAR(45) ,
-  password VARCHAR(45),
-  numEnrolled INT NOT NULL DEFAULT 0 ,
+  password VARCHAR(45) CHECK(length(password)>3),
+  numEnrolled INT NOT NULL DEFAULT 0 CHECK( numEnrolled >= 0 ), --unsigned
   TeacherProfile_User_email VARCHAR(255),
   PRIMARY KEY (name, year),
   CONSTRAINT fk_Course_Category
@@ -96,7 +98,8 @@ CREATE  TABLE  Course (
     FOREIGN KEY (TeacherProfile_User_email )
     REFERENCES TeacherProfile (User_email )
     ON DELETE SET NULL
-    ON UPDATE NO ACTION);
+    ON UPDATE NO ACTION
+);
 
 CREATE INDEX fk_Course_Category ON Course (Category_name ASC) ;
 
@@ -128,18 +131,21 @@ CREATE  TABLE  ForumReply (
   ForumThread_created_at TIMESTAMP NOT NULL ,
   ForumThread_User_email VARCHAR(255) NOT NULL ,
   -- parent
-  ForumReply_created_at TIMESTAMP,
+  ForumReply_created_at TIMESTAMP, 
   ForumReply_User_email VARCHAR(255),
   title VARCHAR(255) NOT NULL ,
   body VARCHAR(6144) NOT NULL ,
-  num_likes INT NOT NULL DEFAULT 0 , --unsigned
-  num_edits INT NOT NULL DEFAULT 0 ,
+  num_likes INT NOT NULL DEFAULT 0
+  	CHECK(num_likes >= 0), --unsigned
+  num_edits INT NOT NULL DEFAULT 0
+  	CHECK(num_edits >= 0), --unsigned
   PRIMARY KEY (User_email, created_at) ,
   CONSTRAINT fk_ForumReply_User
     FOREIGN KEY (User_email )
     REFERENCES User (email )
-    ON DELETE CASCADE
-   );
+    ON DELETE CASCADE,
+  CHECK (created_at > ForumReply_created_at)
+);
 
 
 ALTER TABLE ForumReply
@@ -190,7 +196,7 @@ CREATE INDEX fk_Enrollment_Course ON Enrollment (Course_name ASC, Course_year AS
 -- Table CourseGrade
 -- -----------------------------------------------------
 CREATE  TABLE  CourseGrade (
-  value SMALLINT NOT NULL DEFAULT 0 , --unsigned
+  value SMALLINT NOT NULL DEFAULT 0 CHECK (value>=0), --unsigned
   StudentProfile_User_email VARCHAR(255) NOT NULL ,
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
@@ -247,7 +253,7 @@ CREATE  TABLE  Assignment (
   title VARCHAR(255) NOT NULL ,
   description VARCHAR(6144) NOT NULL ,
   deadline TIMESTAMP NOT NULL WITH DEFAULT,
-  max_points SMALLINT NOT NULL , --unsigned
+  max_points SMALLINT NOT NULL CHECK (max_points>=0), --unsigned
   Course_name VARCHAR(255) NOT NULL ,
   Course_year SMALLINT NOT NULL ,
   TeacherProfile_User_email VARCHAR(255),
@@ -271,7 +277,7 @@ CREATE INDEX fk_Assignment_TeacherProfile ON Assignment (TeacherProfile_User_ema
 -- Table AssignmentGrade
 -- -----------------------------------------------------
 CREATE  TABLE  AssignmentGrade (
-  value SMALLINT NOT NULL , -- unsigned
+  value SMALLINT NOT NULL CHECK(value>=0), -- unsigned
   StudentProfile_User_email VARCHAR(255) NOT NULL ,
   Assignment_title VARCHAR(255) NOT NULL ,
   Assignment_Course_name VARCHAR(255) NOT NULL ,
@@ -454,14 +460,17 @@ CREATE  TABLE  Speciality (
 -- Table SpecialityLookup
 -- -----------------------------------------------------
 CREATE  TABLE  SpecialityLookup (
-  fn_from INT NOT NULL ,
-  fn_to INT NOT NULL ,
+  fn_from INT NOT NULL UNIQUE,
+  fn_to INT NOT NULL UNIQUE,
   Speciality_name VARCHAR(255) NOT NULL ,
   PRIMARY KEY (fn_from, fn_to, Speciality_name) ,
   CONSTRAINT fk_SpecialityLookup_Speciality
     FOREIGN KEY (Speciality_name )
     REFERENCES Speciality (name )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    ON UPDATE NO ACTION,
+  CONSTRAINT range_check
+  	CHECK (fn_from < fn_to)
+);
 
 CREATE INDEX fk_SpecialityLookup_Speciality ON SpecialityLookup (Speciality_name ASC) ;

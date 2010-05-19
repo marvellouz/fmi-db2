@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Arch Linux) (format=pdflatex 2010.1.20)  19 MAY 2010 20:57
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Arch Linux) (format=pdflatex 2010.1.20)  20 MAY 2010 00:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -874,7 +874,7 @@ Overfull \hbox (3.20338pt too wide) in paragraph at lines 107--108
 . ¿‚-ÚÓ-Ë Ì‡ ÌÓ-‚Ë-ÌË-ÚÂ Ò‡ \T2A/cmr/bx/n/10 TeacherProfile\T2A/cmr/m/n/10 . 
  []
 
-<../entity_relationship.jpeg, id=56, 3381.63374pt x 2078.76625pt>
+<../entity_relationship.jpeg, id=66, 3381.63374pt x 2078.76625pt>
 File: ../entity_relationship.jpeg Graphic file (type jpg)
 
 <use ../entity_relationship.jpeg>
@@ -886,7 +886,7 @@ Overfull \hbox (22.27867pt too wide) in paragraph at lines 117--118
 LaTeX Warning: Float too large for page by 19.39459pt on input line 118.
 
 [2] [3 <../entity_relationship.jpeg>]
-<../relational_model.png, id=69, 1862.96pt x 1398.22375pt>
+<../relational_model.png, id=79, 1862.96pt x 1398.22375pt>
 File: ../relational_model.png Graphic file (type png)
 
 <use ../relational_model.png>
@@ -897,10 +897,37 @@ Overfull \hbox (103.4435pt too wide) in paragraph at lines 133--134
 
 LaTeX Warning: Float too large for page by 19.28351pt on input line 134.
 
-LaTeX Font Info:    Font shape `T2A/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `T2A/cmtt/m/n' tried instead on input line 139.
 ! Undefined control sequence.
-l.154 ...ø–æ–ª–∑–≤–∞–π–∫–∏ —Ä–µ–ª–∞—Ü–∏—è—Ç–∞ \rel
+l.138 ...–∞ \attr{year} –∞—Ç—Ä–∏–±—É—Ç–∞ –Ω–∞ \rel
+                                                  {Course} –µ –æ–≥—Ä–∞–Ω–∏—á...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.139 ...—É $1000$ –∏ $9999$. –ó–∞ –≤—Å–µ–∫–∏ \rel
+                                                  {ForumReply} –µ –Ω–∞–ª–æ–∂...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.140 ...∞–ª–∫–æ $5$. –ó–∞ —Ä–µ–ª–∞—Ü–∏—è—Ç–∞ \rel
+                                                  {SpecialityLookup} —Å–µ –ø...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+LaTeX Font Info:    Font shape `T2A/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `T2A/cmtt/m/n' tried instead on input line 145.
+! Undefined control sequence.
+l.147 ...ø–æ–ª–∑–≤–∞–π–∫–∏ —Ä–µ–ª–∞—Ü–∏—è—Ç–∞ \rel
                                                   {SpecialityLookup}, –≤ –∫–...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -909,42 +936,71 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-Overfull \hbox (0.80566pt too wide) in paragraph at lines 153--156
+Overfull \hbox (0.80566pt too wide) in paragraph at lines 146--148
 []\T2A/cmr/m/n/10 ¬˙˘‡ ËÏÂ-ÚÓ Ì‡ ÒÔÂ-ˆË-‡Î-
  []
 
 
-Overfull \hbox (12.46948pt too wide) in paragraph at lines 157--158
+Overfull \hbox (12.46948pt too wide) in paragraph at lines 149--150
 []\T2A/cmr/m/n/10 ¬˙˘‡ ·Óˇ
  []
 
 
-Overfull \hbox (21.05072pt too wide) in paragraph at lines 159--160
+Overfull \hbox (21.05072pt too wide) in paragraph at lines 151--152
 []\T2A/cmr/m/n/10 ¬˙˘‡
  []
 
 
-Overfull \hbox (88.97858pt too wide) in paragraph at lines 161--163
+Overfull \hbox (88.97858pt too wide) in paragraph at lines 153--155
 []
  []
 
 [4] [5 <../relational_model.png (PNG copy)>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 175.
- [6]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 175.
+! Undefined control sequence.
+l.177 ...ø–æ–ª–∑–≤–∞–π–∫–∏ —Ä–µ–ª–∞—Ü–∏—è—Ç–∞ \rel
+                                                  {SpecialityLookup}, –≤ –∫–...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (0.80566pt too wide) in paragraph at lines 176--179
+[]\T2A/cmr/m/n/10 ¬˙˘‡ ËÏÂ-ÚÓ Ì‡ ÒÔÂ-ˆË-‡Î-
+ []
+
+
+Overfull \hbox (12.46948pt too wide) in paragraph at lines 180--181
+[]\T2A/cmr/m/n/10 ¬˙˘‡ ·Óˇ
+ []
+
+
+Overfull \hbox (21.05072pt too wide) in paragraph at lines 182--183
+[]\T2A/cmr/m/n/10 ¬˙˘‡
+ []
+
+
+Overfull \hbox (88.97858pt too wide) in paragraph at lines 184--186
+[]
+ []
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 198.
+[6]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 198.
  (./doc.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 175.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 198.
 Package rerunfilecheck Info: File `doc.out' has not changed.
-(rerunfilecheck)             Checksum: 5F670C4875ED7AF6B013C3DC5EBE3D53;879.
+(rerunfilecheck)             Checksum: 1E4D3C3224280BA407749DBB0C7EE853;1109.
  ) 
 Here is how much of TeX's memory you used:
- 9187 strings out of 493847
- 122082 string characters out of 3153979
+ 9191 strings out of 493847
+ 122122 string characters out of 3153979
  228815 words of memory out of 3000000
- 12281 multiletter control sequences out of 15000+200000
+ 12283 multiletter control sequences out of 15000+200000
  14652 words of font info for 34 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 31i,9n,40p,348b,381s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 31i,9n,40p,348b,389s stack positions out of 5000i,500n,10000p,200000b,50000s
  </home/emil/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/lati1000.600pk> </h
 ome/emil/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/lasl1000.600pk> </home/em
 il/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/latt1000.600pk> </home/emil/.te
@@ -956,10 +1012,10 @@ nts/pk/ljfour/lh/lh-t2a/larm1200.600pk> </home/emil/.texlive/texmf-var/fonts/pk
 r/lh/lh-t2a/labx1440.600pk> </home/emil/.texlive/texmf-var/fonts/pk/ljfour/lh/l
 h-t2a/lacc1200.600pk> </home/emil/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/
 lacc1000.600pk></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-
-Output written on doc.pdf (7 pages, 1166783 bytes).
+</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on doc.pdf (7 pages, 1181924 bytes).
 PDF statistics:
- 493 PDF objects out of 1000 (max. 8388607)
- 17 named destinations out of 1000 (max. 500000)
- 67 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 520 PDF objects out of 1000 (max. 8388607)
+ 19 named destinations out of 1000 (max. 500000)
+ 83 words of extra memory for PDF output out of 10000 (max. 10000000)
 
