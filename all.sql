@@ -679,9 +679,7 @@ REFERENCING
 	NEW AS N_ROW
 	FOR EACH ROW
 	INSERT INTO ForumReplyNotification(body, ForumReply_created_at, ForumReply_User_email)
-	VALUES (N_ROW.body, N_ROW.ForumReply_created_at, N_ROW.ForumReply_User_email);
-
-
+	VALUES ('New reply ' concat N_ROW.title, N_ROW.created_at, N_ROW.User_email);
 
 CREATE TRIGGER tr_new_assignment_notify AFTER INSERT ON Assignment
 REFERENCING
@@ -727,9 +725,17 @@ DELETE FROM ENROLLMENT
 SELECT numEnrolled FROM Course
 WHERE name='Python';
 
-
-INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+-- Insert into ForumReply 2 rows and then select all notifications to show there appeared 2 notifications 
+INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
  VALUES('valentin@yahoo.com', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
+
+INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('dragan@abv.bg', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
+
+INSERT INTO ForumReply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('dragan@abv.bg', TIMESTAMP('2010-05-19 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
+
+
 
 select * from ForumReplyNotification;
 set schema FN71100_71012;
@@ -775,3 +781,25 @@ TeacherProfile t
 GROUP BY t.User_email;
 
 SELECT User_email FROM table(FN71100_71012.all_course_teachers('Python', 2009));
+create view StudentsInfoView as
+select faculty_number, email, first_name, last_name from
+StudentProfile s join User u on
+s.User_email = u.email;
+
+select * from StudentsInfoView;
+
+create view TeacherInfoView as
+select title, email, first_name, last_name from
+TeacherProfile s join User u on
+s.User_email = u.email;
+
+select * from TeacherInfoView;
+
+create view TeacherStudentView as
+select * 
+from User where
+email in (select User_email from TeacherProfile)
+and
+email in (select User_email from StudentProfile);
+
+select * from TeacherStudentView;
