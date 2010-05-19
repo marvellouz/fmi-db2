@@ -809,3 +809,10 @@ and
 email in (select User_email from StudentProfile);
 
 select * from TeacherStudentView;
+
+create view CourseInfoView as
+select name, year, Category_name, email, title, first_name, last_name
+from Course c join TeacherInfoView t on
+c.TeacherProfile_User_email = t.email;
+
+select * from CourseInfoView;
