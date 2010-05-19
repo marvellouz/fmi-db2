@@ -1,0 +1,4 @@
+# path | name | Resource_id
+/dir1/dir3/file1.ext | file1 | 1
+/dir1/dir3/file2.ext | file2 | 1
+/dir1/dir4/file1.ext | file1 | 3
