@@ -144,7 +144,7 @@ CREATE  TABLE  ForumReply (
     FOREIGN KEY (User_email )
     REFERENCES User (email )
     ON DELETE CASCADE,
-  CHECK (created_at < ForumReply_created_at)
+  CHECK (created_at > ForumReply_created_at)
 );
 
 
@@ -468,8 +468,9 @@ CREATE  TABLE  SpecialityLookup (
     FOREIGN KEY (Speciality_name )
     REFERENCES Speciality (name )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
   CONSTRAINT range_check
-  	CHECK (fn_from < fn_to);
+  	CHECK (fn_from < fn_to)
+);
 
 CREATE INDEX fk_SpecialityLookup_Speciality ON SpecialityLookup (Speciality_name ASC) ;

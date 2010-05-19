@@ -144,7 +144,7 @@ CREATE  TABLE  ForumReply (
     FOREIGN KEY (User_email )
     REFERENCES User (email )
     ON DELETE CASCADE,
-  CHECK (created_at < ForumReply_created_at)
+  CHECK (created_at > ForumReply_created_at)
 );
 
 
@@ -468,9 +468,10 @@ CREATE  TABLE  SpecialityLookup (
     FOREIGN KEY (Speciality_name )
     REFERENCES Speciality (name )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
   CONSTRAINT range_check
-  	CHECK (fn_from < fn_to);
+  	CHECK (fn_from < fn_to)
+);
 
 CREATE INDEX fk_SpecialityLookup_Speciality ON SpecialityLookup (Speciality_name ASC) ;
 set schema FN71100_71012;
@@ -567,9 +568,9 @@ INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread
 INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
  VALUES('dinko@yahoo.com', TIMESTAMP('2010-05-17 13:19:41'), TIMESTAMP('2010-05-17 13:16:31'), 'ivan@abv.bg', NULL, NULL, 'Hi Archers... :) Is it difficult to create a LiveArch...?', 'Hi there everybody I wish to create a Live Lightweight Arch Distro, packed with stuff compiled from source, mostly engineering apps...Is this "Mission Impossible", or Just "Mission difficult"...Tried to use Knoppix for that... there are rather well detailed Howtos in Google... but, as I was trying to set up the environment to build my own stuff from source, the libs and all, Synaptic said some of them were not Installable... although it installed some stuff ...I was using the LiveCD... to start from a minimal base... is this a LiceCD issue, or is it to be expected in the LiveDVD also... ? Happened with the 6.3 Knoppix... So I wanna try Arch...Shylock made a nice Live distro, ArchBang, but it cannot be remastered and rebuilt so as to create an Iso and burn it into a CD (DVD ) with all the stuff that I want to put in there... can it...? Think of it as my "Lightweight" B-52, ROFL , as ArchBang would be a sort of Lightweight F23 Raptor... BRGDS Alex', 2, 0);
 INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('elena@yahoo.com', TIMESTAMP('2010-05-17 13:22:32'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', TIMESTAMP('2010-05-17 13:46:49'), 'valentin@yahoo.com', 'Problems after changing controlling boot distro', 'Hello, I have 2 500gb drives. Arch used to be /dev/sda1 with /home on /dev/sda6. I have decided to hook up both my drives and now I have PClinux on /dev/sda1 with the home on /dev/sda6. I setup grub on PClinux to boot Arch on /dev/sdb1 without issue. Now the problem I have is when I boot Arch everything goes fine until I login as user. It gives some sort of cant find HOME= defaulting to default (home is on /dev/sdb6). I cant start X or anything. Anyone have any ideas without doing a re-install?', 3, 2);
+ VALUES('elena@yahoo.com', TIMESTAMP('2010-05-17 13:55:32'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', TIMESTAMP('2010-05-17 13:46:49'), 'valentin@yahoo.com', 'Problems after changing controlling boot distro', 'Hello, I have 2 500gb drives. Arch used to be /dev/sda1 with /home on /dev/sda6. I have decided to hook up both my drives and now I have PClinux on /dev/sda1 with the home on /dev/sda6. I setup grub on PClinux to boot Arch on /dev/sdb1 without issue. Now the problem I have is when I boot Arch everything goes fine until I login as user. It gives some sort of cant find HOME= defaulting to default (home is on /dev/sdb6). I cant start X or anything. Anyone have any ideas without doing a re-install?', 3, 2);
 INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_User_email,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
- VALUES('petkan@abv.bg', TIMESTAMP('2010-05-17 13:27:15'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', TIMESTAMP('2010-05-17 13:22:32'), 'elena@yahoo.com', 'Im thinking I am having permission problems with oblogout and openbox in arch.', 'I am currently running Arch with openbox. I have setup oblogout, but the only buttons that work are Logout and cancel. I cant get shutdown, reboot, suspend, or lock to work. Any ideas?', 0, 9);
+ VALUES('petkan@abv.bg', TIMESTAMP('2010-05-17 13:58:15'), TIMESTAMP('2010-05-17 13:16:23'), 'ivan@abv.bg', TIMESTAMP('2010-05-17 13:55:32'), 'elena@yahoo.com', 'Im thinking I am having permission problems with oblogout and openbox in arch.', 'I am currently running Arch with openbox. I have setup oblogout, but the only buttons that work are Logout and cancel. I cant get shutdown, reboot, suspend, or lock to work. Any ideas?', 0, 9);
 INSERT INTO Enrollment 
  VALUES('ivan@abv.bg', 'Not Classical Logics For Artificial Intelligence', 2010);
 INSERT INTO Enrollment 
