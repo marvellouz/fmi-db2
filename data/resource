@@ -1,4 +1,4 @@
-# created_at | description | Course_name | Course_year
-2010-05-17 20:46:51 | resource description 1 | Python | 2009 
-2010-05-27 20:46:51 | resource description 2 | Python | 2009 
-2010-06-17 20:46:51 | resource description 3 | Set Theory | 2010  
+# id | created_at | description | Course_name | Course_year
+1 | 2010-05-17 20:46:51 | resource description 1 | Python | 2009 
+2 | 2010-05-27 20:46:51 | resource description 2 | Python | 2009 
+3 | 2010-06-17 20:46:51 | resource description 3 | Set Theory | 2010  

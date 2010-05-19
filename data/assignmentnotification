@@ -1,0 +1,4 @@
+# body | created_at | id | Assignment_title | Assignment_Course_name | Assignment_Course_year
+Assignment notification body 1 | 2010-05-19 12:07:18 | 1 | Test assignment 1 | Python | 2009 
+Assignment notification body 2 | 2010-05-19 12:09:06 | 2 | Test assignment 2 | Python | 2009 
+Assignment notification body 3 | 2010-05-19 12:10:16 | 3 | Test assignment 3 | Set Theory | 2010 
