@@ -10,6 +10,16 @@ set schema FN71100_71012;
 -- drop trigger tr_enrollment_new_count;
 -- drop trigger tr_enrollment_delete_count;
 
+
+CREATE TRIGGER tr_new_reply_notify AFTER INSERT ON ForumReply
+REFERENCING
+	NEW AS N_ROW
+	FOR EACH ROW
+	INSERT INTO ForumReplyNotification(body, ForumReply_created_at, ForumReply_User_email)
+	VALUES (N_ROW.body, N_ROW.ForumReply_created_at, N_ROW.ForumReply_User_email);
+
+
+
 CREATE TRIGGER tr_new_assignment_notify AFTER INSERT ON Assignment
 REFERENCING
 	NEW AS N_ROW
@@ -53,3 +63,9 @@ DELETE FROM ENROLLMENT
 			WHERE StudentProfile_User_email='dragan@abv.bg' AND Course_name='Set Theory' AND Course_year=2010;
 SELECT numEnrolled FROM Course
 WHERE name='Python';
+
+
+INSERT INTO Forumreply (User_email,created_at,ForumThread_created_at,ForumThread_title,ForumReply_created_at,ForumReply_User_email,title,body,num_likes,num_edits)
+ VALUES('valentin@yahoo.com', TIMESTAMP('2010-05-18 13:46:49'), TIMESTAMP('2010-05-17 13:16:23'), 'Test title of thread', NULL, NULL, 'arch - wireless', 'Hey, new archer here!!! Yesterday I installed arch 64bit and after doing some configuration tricks, Im still left with a couple of issues. 1. No wireless networks founeITs an usb wifi card - (works out of the box in slackware-current on the same laptop).', 4, 1);
+
+select * from ForumReplyNotification;
